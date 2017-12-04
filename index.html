@@ -1,40 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Bootstrap Example</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        .buttons {
+            text-align: right;
+            width: 250px;
+        }
+        .buttons button{
+            visibility: hidden;
+        }
+        tr:hover .buttons button{
+            visibility: visible;
+        }
+    </style>
 </head>
 <body>
-
 <div class="jumbotron text-center">
-  <h1>My First Bootstrap Page</h1>
-  <p>Resize this responsive page to see the effect!</p>
+    <h1>My First Bootstrap Page</h1>
+    <p>Resize this responsive page to see the effect!</p>
 </div>
 
 <div class="container">
-  <div class="row">
-    <div class="col-sm-4">
-      <select name="jlist" onlick="function()" size={lenght}>
-
-        <option value="A">Item A{list[0]}</option>
-        <option value="B">Item B</option>
-        <option value="C">Item Csafas</option>
-    </select>
-    </div>
-  </div>
-  <form action="http://127.0.0.1:8081/" method="post">
-  <button name="foo" type="submit" value="fav_HTML">HTML</button>
-  <button name="subject" type="submit" value="fav_CSS">CSS</button>
-</form>
-  <button type="button" class="btn btn-primary active">Detail</button>
-  <button type="button" class="btn btn-primary active">Zobraz</button>
-  <button type="button" class="btn btn-primary active">Zmaz</button>
-
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Created</th>
+                <th>Resolution</th>
+                <th>Camera</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="tableContent">
+        </tbody>
+    </table>
 </div>
+<script type="text/javascript">
+    function openDetail() {
+        console.log("klikol si na ")
+    }
 
+    const data = [
+        {
+            created: "12.11.1993 12:00",
+            resolution: {x: 1234, y: 4321},
+            camera: "Gabova camera"
+        },
+        {
+            created: "12.11.1995 12:00",
+            resolution: {x: 123, y: 321},
+            camera: "Davidova camera"
+        },
+        {
+            created: "12.11.1996 12:00",
+            resolution: {x: 12, y: 21},
+            camera: "Mišova camera"
+        }
+    ]
+
+    // toto je funkcia ktorá sa automaticky zavola ked sa cela stranka nacita
+    function init(){
+        const URL = "http://127.0.0.1:8081";
+        const params = {};
+        //posleme HTTP request
+        //$.post(URL + "/browse", params, (data) => {
+            // ak je odpoved pole
+            if (Array.isArray(data)) {
+                let result = "";
+                // prejdeme celym polom
+                data.forEach((item) => {
+                    // pridame riadok
+                    result += `
+                        <tr>
+                            <td>${item.created}</td>
+                            <td>${item.resolution.x + " x " + item.resolution.y}</td>
+                            <td>${item.camera}</td>
+                            <td class="buttons">
+                                <button type="button" class="btn btn-default btn-sm">
+                                    <span class="glyphicon glyphicon-remove"></span> 
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm">
+                                    <span class="glyphicon glyphicon-cloud-download"></span> 
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm">
+                                    <span class="glyphicon glyphicon-eye-open"></span> 
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                // cely vysledok pridame do tabulky
+                document.getElementById("tableContent").innerHTML = result;
+            }
+        //});
+    };
+    init();
+</script>
 </body>
 </html>
