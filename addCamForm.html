@@ -26,7 +26,7 @@
         alert("Zmenil som selektor");
         });
 
-function myFunction() {
+function TypeCamSeleced() {
 
     <!--alert("You selected some text!");-->
     var e = document.getElementById("cam");
@@ -59,12 +59,11 @@ function myFunction() {
     Nazov kamery:<input type="text" name="username"><br />
 
 
-    <select id="cam" onchange="myFunction()">
+    <select id="cam" onchange="TypeCamSeleced()">
       <option value="USB">USB Kamera</option>
       <option value="IP">IP Kamera</option>
     </select>
 
-    Last Name: <input type="text" name="last_name" />
 
     <div id ="usb" style="visibility: visible;">
         Tu bude list usb

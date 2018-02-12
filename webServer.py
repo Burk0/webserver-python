@@ -43,8 +43,10 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
         if self.path.endswith("/browse"):
             self.send_page('index.html')
         elif self.path.endswith("/cams"):
-            print("ina stranka")
+        #     print("ina stranka")
             self.send_page('addCamForm.html')
+        elif self.path.endswith("/views"):
+            self.send_page('addViewForm.html')
 
 
 
@@ -82,6 +84,10 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
             username = form.getvalue("username")
 
             print(username)
+
+        elif "/addView" in self.path:
+            print(self.path)
+
         else:
             print(self.path)
 

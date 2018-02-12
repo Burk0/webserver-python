@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script>
+   const URL = "http://127.0.0.1:8081";
+
+    $(document).ready(function(){
+
+                    $("#submit").click(function(){
+
+                                    $.post("URL/addView?" + $("form").serialize(), {}, function(response) {
+
+                                                    console.log("response");
+
+                                    })
+
+                    });
+
+    });
+
+
+
+    //netestovane zatial !!!!
+    function DisableInterval() {
+        console.log("volam sa");
+        document.getElementById('intervalmezdiFotkami').disabled = true;
+        document.getElementById('intervalmezdiFotkami').value="";
+    }
+
+
+</script>
+
+</head>
+
+<body>
+
+<form action="#">
+
+    Nazov nastavenia:<input type="text" name="username"><br />
+    Pohybovy detektor:<input type="checkbox" name="prz_motionDetect" value="prz_motionDetect" onclick="DisableInterval()"><br />
+    Interval medzi fotkami:<input type="number" id="intervalmezdiFotkami" value="0" min="1"> <br /><!-- ak je vybraty MD potrebujem toto zadisable-->
+    Nova fotka pri chybe:<input type="checkbox" name="prz_novafotka" value="prz_novafotka">
+    <input type="number" id="novaFotkaprichybe" value="0" min="1"><br />
+    Smazat fotku:<input type="checkbox" name="prz_zmaz" value="prz_zmaz">
+    <input type="number" id="zmazfotkuC" value="0" min="1"><br />
+    Aplikovat toto nastavenie len v urcitych hodinach:<input type="checkbox" name="prz_rezim" value="prz_rezim">
+    <input type="number" id="rezim" value="0" min="1"><br />
+
+
+
+<input type="button" value="Submit" id="submit" />
+
+</form>
+
+        </body>
+
+</html>
