@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
     <title>Bootstrap Example</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+
     <style>
         .buttons {
             text-align: right;
@@ -26,13 +30,29 @@
     </style>
 </head>
 <body>
-<div class="jumbotron text-center">
-    <h1>My First Bootstrap Page</h1>
-    <p>Resize this responsive page to see the effect!</p>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1>Expandable Search Form</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 col-md-offset-3">
+            <form action="" class="search-form">
+                <div class="form-group has-feedback">
+            		<label for="search" class="sr-only">Search</label>
+            		<input type="text" class="form-control" name="search" id="search" placeholder="search">
+              		<span class="glyphicon glyphicon-search form-control-feedback"></span>
+            	</div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <div class="container">
-    <table class="table table-hover">
+    <table class="table table-hover" id="example">
         <thead>
             <tr>
                 <th>Created</th>
@@ -52,8 +72,8 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Modal Header</h4>
             </div>
-            <div class="modal-body">
-                <p>Some text in the modal.</p>
+            <div class="modal-body" id="detail-content">
+                <!--<p>Some text in the modal.</p>-->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -69,31 +89,35 @@
     </div>
 </div>
 <script type="text/javascript">
+
+
     const URL = "http://127.0.0.1:8081";
 
-    const data = [
-        {
-            created: "12.11.1993 12:00",
-            resolution: {x: 1234, y: 4321},
-            camera: "Gabova camera"
-        },
-        {
-            created: "12.11.1995 12:00",
-            resolution: {x: 123, y: 321},
-            camera: "Davidova camera"
-        },
-        {
-            created: "12.11.1996 12:00",
-            resolution: {x: 12, y: 21},
-            camera: "Mišova camera"
-        }
-    ]
+    <!--const data = [-->
+        <!--{-->
+            <!--created: "12.11.1993 12:00",-->
+            <!--resolution: {x: 1234, y: 4321},-->
+            <!--camera: "Gabova camera"-->
+        <!--},-->
+        <!--{-->
+            <!--created: "12.11.1995 12:00",-->
+            <!--resolution: {x: 123, y: 321},-->
+            <!--camera: "Davidova camera"-->
+        <!--},-->
+        <!--{-->
+            <!--created: "12.11.1996 12:00",-->
+            <!--resolution: {x: 12, y: 21},-->
+            <!--camera: "Mišova camera"-->
+        <!--}-->
+    <!--]-->
 
     function openDetail(item) {
+        console.log("nieco sa deje");
         const params = {};
         //posleme HTTP request
-        $.post(URL + "/detail/" + item.id, params, (detail) => {
-            console.log("detail: ", detail);
+        $.post(URL + "/detail/" + item, params, (detail) => {
+            console.log(params);
+            <!--document.getElementById("detail-content").innerHTML = `<p>${data}</p>`;-->
         }, "json");
     }
     function showImage(item) {
@@ -106,29 +130,31 @@
 
     // toto je funkcia ktorá sa automaticky zavola ked sa cela stranka nacita
     function init(){
+
         const params = {};
         //posleme HTTP request
-        //$.post(URL + "/browse", params, (data) => {
+        $.post(URL + "/browse", params, (data) => {
             // ak je odpoved pole
             if (Array.isArray(data)) {
+
                 let result = "";
                 // prejdeme celym polom
                 data.forEach((item) => {
                     // pridame riadok
                     result += `
                         <tr>
-                            <td>${item.created}</td>
-                            <td>${item.resolution.x + " x " + item.resolution.y}</td>
-                            <td>${item.camera}</td>
+                            <td>${item.id}</td>
+                            <td>${item.nazov}</td>
+                            <td>${item.year}</td>
                             <td class="buttons">
                                 <button type="button" class="btn btn-default btn-sm">
-                                    <span class="glyphicon glyphicon-remove"></span> 
+                                    <span class="glyphicon glyphicon-remove"></span>
                                 </button>
-                                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#detailModal">
-                                    <span class="glyphicon glyphicon-info-sign"></span> 
+                                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#detailModal" onclick="openDetail(${item.id})">
+                                    <span class="glyphicon glyphicon-info-sign"></span>
                                 </button>
                                 <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#previewModal">
-                                    <span class="glyphicon glyphicon-eye-open"></span> 
+                                    <span class="glyphicon glyphicon-eye-open"></span>
                                 </button>
                             </td>
                         </tr>
@@ -137,7 +163,7 @@
                 // cely vysledok pridame do tabulky
                 document.getElementById("tableContent").innerHTML = result;
             }
-        //}, "json");
+        }, "json");
     };
     init();
 </script>

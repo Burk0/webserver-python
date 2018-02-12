@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script>
+   const URL = "http://127.0.0.1:8081";
+
+    $(document).ready(function(){
+
+                    $("#submit").click(function(){
+
+                                    $.post("URL/addCam?" + $("form").serialize(), {}, function(response) {
+
+                                                    console.log("response");
+
+                                    })
+
+                    });
+
+    });
+
+    $("select").change(function () {
+        alert("Zmenil som selektor");
+        });
+
+function myFunction() {
+
+    <!--alert("You selected some text!");-->
+    var e = document.getElementById("cam");
+    var strUser = e.options[e.selectedIndex].value;
+
+    if(strUser == "IP") {
+        console.log("Som v IP");
+        jQuery('#ip').css('visibility','visible');
+        jQuery('#usb').css('visibility','hidden');
+
+
+    } else {
+        console.log("Som v USB");
+        jQuery('#usb').css('visibility','visible');
+        jQuery('#ip').css('visibility','hidden');
+
+
+    }
+
+}
+
+</script>
+
+</head>
+
+<body>
+
+<form action="#">
+
+    Nazov kamery:<input type="text" name="username"><br />
+
+
+    <select id="cam" onchange="myFunction()">
+      <option value="USB">USB Kamera</option>
+      <option value="IP">IP Kamera</option>
+    </select>
+
+    Last Name: <input type="text" name="last_name" />
+
+    <div id ="usb" style="visibility: visible;">
+        Tu bude list usb
+    <input type="button" value="Test" />
+    </div>
+
+    <div id = "ip" style="visibility: hidden;">
+        Prihlasovacie meno: <input type="text" name="acc_name"/>
+        Prihlasovacie heslo: <input type="text" name="acc_pass"/>
+        IP adresa kamery: <input type="text" name="id_adrss"/>
+        <input type="button" value="Test" />
+    </div>
+
+
+<input type="button" value="Submit" id="submit" />
+
+</form>
+
+        </body>
+
+</html>
