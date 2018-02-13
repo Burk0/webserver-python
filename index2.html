@@ -37,7 +37,6 @@
 </head>
 <body>
 
-
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
@@ -86,7 +85,7 @@
                     <th></th>
                 </tr>
                 </thead>
-                <tbody id="tableContent">
+                <tbody id="tableShotsContent">
                 <tr>
                     <td>12.11.1993</td>
                     <td>800x600</td>
@@ -97,6 +96,11 @@
                                 data-toggle="modal"
                                 data-target="#previewModal">
                             <span class="glyphicon glyphicon-eye-open"></span>
+                        </button>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                onclick="removeShot(1)">
+                            <span class="glyphicon glyphicon-trash"></span>
                         </button>
                     </td>
                 </tr>
@@ -123,8 +127,20 @@
                                 class="btn btn-default btn-sm"
                                 onclick="openCameraDetail(0)"
                                 data-toggle="modal"
-                                data-target="#addCamForm">
+                                data-target="#detailCamForm">
                             <span class="glyphicon glyphicon-info-sign"></span>
+                        </button>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                onclick="openCameraDetail(0, false)"
+                                data-toggle="modal"
+                                data-target="#detailCamForm">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </button>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                onclick="removeCamera(1)">
+                            <span class="glyphicon glyphicon-trash"></span>
                         </button>
                     </td>
                 </tr>
@@ -134,7 +150,7 @@
                     class="btn btn-primary"
                     onclick="openCameraDetail('new')"
                     data-toggle="modal"
-                    data-target="#addCamForm">
+                    data-target="#detailCamForm">
                 Nová kamera
             </button>
         </div>
@@ -142,22 +158,38 @@
             <table class="table table-hover" id="tableOptions">
                 <thead>
                 <tr>
+                    <th>Názov</th>
                     <th>Kamera</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody id="tableOptionsContent">
                 <tr>
+                    <td>Tajné nastavenie</td>
                     <td>Moja najlepšia a zároveň jediná kamera</td>
                     <td>
                         <button type="button"
                                 class="btn btn-default btn-sm"
                                 onclick="openOptionDetail(0)"
                                 data-toggle="modal"
-                                data-target="#addViewForm">
+                                data-target="#detailViewForm">
                             <span class="glyphicon glyphicon-info-sign"></span>
                         </button>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                onclick="openOptionDetail(0, false)"
+                                data-toggle="modal"
+                                data-target="#detailViewForm">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </button>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                onclick="removeOption(1)">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
                     </td>
+
+
                 </tr>
                 </tbody>
             </table>
@@ -165,7 +197,7 @@
                     class="btn btn-primary"
                     onclick="openOptionDetail('new')"
                     data-toggle="modal"
-                    data-target="#addViewForm">
+                    data-target="#detailViewForm">
                 Nové nastavenie
             </button>
         </div>
@@ -201,7 +233,7 @@
 </div>
 
 <!-- Camera detail form modal -->
-<div class="modal fade" id="addCamForm">
+<div class="modal fade" id="detailCamForm">
     <div class="modal-dialog">
         <div class="modal-content">
 
@@ -262,7 +294,7 @@
 </div>
 
 <!-- Option detail form modal -->
-<div class="modal fade" id="addViewForm">
+<div class="modal fade" id="detailViewForm">
     <div class="modal-dialog">
         <div class="modal-content">
 
@@ -365,14 +397,35 @@
 </div>
 
 <script type="text/javascript">
+    const cameras = [];
+    const options = [];
+    const shots = [];
+    const camerasBody = document.getElementById("tableCamerasContent");
+    const optionsBody = document.getElementById("tableOptionsContent");
     const URL = "http://127.0.0.1:8081";
+    const setAndDisable = (element, value, disabled) => {
+        if (element.type === "checkbox") {
+            element.checked = !!value;
+        }
+        else {
+            element.value = value;
+        }
+        element.disabled = disabled;
+    };
+
+    function removeCamera(index) {
+        cameras.splice(index, 1);
+        setCameras();
+    }
+    function removeShot(index) {
+        $("#tableShotsContent").find("tr:nth-child(" + index + ")").remove();
+    }
+    function removeOption(index) {
+        options.splice(index, 1);
+        setOptions();
+    }
 
     function openCameraDetail(cameraId = "new", disabled) {
-        const setAndDisable = (element, value, disabled) => {
-            element.value = value;
-            element.disabled = disabled;
-            console.log(element, disabled);
-        };
         const buttonEdit = document.getElementById("cameraDetailEdit");
         const buttonSubmit = document.getElementById("cameraDetailSubmit");
 
@@ -382,13 +435,7 @@
         const inputIpAddress = document.getElementById("id_adrss");
         const inputCameraType = document.getElementById("cam");
 
-        const camera = {
-            name: "Moja najlepšia a zároveň jediná kamera",
-            type: "IP",
-            password: "tajneHeslo222",
-            address: "127.0.0.1",
-            camera: "UTC-2000",
-        };
+        const camera = cameras[cameraId];
 
         disabled = typeof disabled === "undefined" ? cameraId !== "new" : disabled;
 
@@ -422,15 +469,6 @@
     }
 
     function openOptionDetail(optionId = "new", disabled) {
-        const setAndDisable = (element, value, disabled) => {
-            if (element.type === "checkbox") {
-                element.checked = !!value;
-            }
-            else {
-                element.value = value;
-            }
-            element.disabled = disabled;
-        };
         const buttonEdit = document.getElementById("optionDetailEdit");
         const buttonSubmit = document.getElementById("optionDetailSubmit");
 
@@ -444,17 +482,7 @@
         const inputActiveTime = document.getElementById("prz_rezim");
         const inputActiveTimeValue = document.getElementById("rezim");
 
-        const Option = {
-            name: "Tajné nastavenie",
-            motionDetect: true,
-            motionDetectDelay: 60,
-            photoOnMove: true,
-            photoOnMoveValue: 123,
-            deletePhoto: true,
-            deletePhotoValue: 321,
-            activeTime: true,
-            activeTimeValue: 1111,
-        };
+        const Option = options[optionId];
 
         disabled = typeof disabled === "undefined" ? optionId !== "new" : disabled;
 
@@ -512,7 +540,6 @@
     // 
 
     function openDetail(item) {
-        console.log("nieco sa deje");
         const params = {};
         //posleme HTTP request
         $.post(URL + "/detail/" + item, params, (detail) => {
@@ -520,20 +547,10 @@
         }, "json");
     }
 
-    function showImage(item) {
-        const params = {};
-        //posleme HTTP request
-        $.post(URL + "/detail/" + item.id, params, (detail) => {
-            window.open(detail.url, "_blank");
-        }, "json");
-    }
-
-    //MAIN VIEW
-
     // toto je funkcia ktorá sa automaticky zavola ked sa cela stranka nacita
     function onMainInit() {
         const params = {};
-        //posleme HTTP request
+        // posleme HTTP request pre získanie obrázkov
         $.post(URL + "/browse", params, (data) => {
             // ak je odpoved pole
             if (Array.isArray(data)) {
@@ -569,12 +586,65 @@
                     `;
                 });
                 // cely vysledok pridame do tabulky
-                document.getElementById("tableContent").innerHTML = result;
+                document.getElementById("tableShotsContent").innerHTML = result;
             }
         }, "json");
+
+
+        // posleme HTTP request pre kamier
+        const resultCameras = [{
+            name: "Moja najlepšia a zároveň jediná kamera",
+            type: "IP",
+            password: "tajneHeslo222",
+            address: "127.0.0.1",
+            camera: "UTC-2000",
+        },{
+            name: "Moja druhá najlepšia a zároveň jediná kamera",
+            type: "IP",
+            password: "superTajneHeslo111",
+            address: "127.0.0.2",
+            camera: "UTC-1000",
+        }];
+
+        while(cameras.length){
+            cameras.splice(0, 1);
+        }
+        cameras.push.apply(cameras, resultCameras);
+        setCameras();
+
+
+        // posleme HTTP request pre nastavení
+
+        const resultOptions = [{
+            name: "Tajné nastavenie",
+            cameraName: "Moja najlepšia a zároveň jediná kamera",
+            motionDetect: true,
+            motionDetectDelay: 60,
+            photoOnMove: true,
+            photoOnMoveValue: 123,
+            deletePhoto: true,
+            deletePhotoValue: 321,
+            activeTime: true,
+            activeTimeValue: 1111,
+        },{
+            name: "Mega super nastavenie",
+            cameraName: "Moja najlepšia a zároveň jediná kamera",
+            motionDetect: true,
+            motionDetectDelay: 60,
+            photoOnMove: false,
+            deletePhoto: true,
+            deletePhotoValue: 321,
+            activeTime: false,
+        }];
+
+        while(options.length){
+            options.splice(0, 1);
+        }
+        options.push.apply(options, resultOptions);
+        setOptions();
     }
 
-    // ADD VIEW
+    // Init options detail modal
     function onViewInit() {
         $("#addViewSubmit").click(function () {
             $.post("URL/addView?" + $("form").serialize(), {}, function (response) {
@@ -583,7 +653,7 @@
         });
     }
 
-    // ADD CAM
+    // Init camera detail modal
     function onCamInit() {
         const camElement = document.getElementById("cam");
         const ipElement = document.getElementById("ip");
@@ -611,6 +681,79 @@
         onViewInit();
         onCamInit();
     });
+
+    function setCameras() {
+        let innerHtml = "";
+        cameras.forEach((camera, index) => {
+            // cameras.push(camera);
+            innerHtml += `
+                <tr>
+                    <td>${camera.name}</td>
+                    <td>${camera.type}</td>
+                    <td>${camera.camera}</td>
+                    <td>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                onclick="openCameraDetail(${index})"
+                                data-toggle="modal"
+                                data-target="#detailCamForm">
+                            <span class="glyphicon glyphicon-info-sign"></span>
+                        </button>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                onclick="openCameraDetail(${index}, false)"
+                                data-toggle="modal"
+                                data-target="#detailCamForm">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </button>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                onclick="removeCamera(${index})">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </td>
+                </tr>
+            `
+        });
+        camerasBody.innerHTML = innerHtml;
+    }
+
+    function setOptions() {
+
+        let innerHtml = "";
+        options.forEach((option, index) => {
+            innerHtml += `
+                <tr>
+                    <td>${option.name}</td>
+                    <td>${option.cameraName}</td>
+                    <td>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                onclick="openOptionDetail(${index})"
+                                data-toggle="modal"
+                                data-target="#detailViewForm">
+                            <span class="glyphicon glyphicon-info-sign"></span>
+                        </button>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                onclick="openOptionDetail(${index}, false)"
+                                data-toggle="modal"
+                                data-target="#detailViewForm">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </button>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                onclick="removeOption(${index})">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </td>
+
+
+                </tr>
+            `
+        });
+        optionsBody.innerHTML = innerHtml;
+    }
 </script>
 </body>
 </html>
