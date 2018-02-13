@@ -12,6 +12,15 @@
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
 
     <style>
+        tr, label {
+            cursor: pointer;
+        }
+        tr button {
+            visibility: hidden;
+        }
+        tr:hover button {
+            visibility: visible;
+        }
         .hidden {
             display: none;
         }
