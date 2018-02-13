@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+
+    <style>
+        .buttons {
+            text-align: right;
+            width: 250px;
+        }
+        .buttons button{
+            visibility: hidden;
+        }
+        tr:hover .buttons button{
+            visibility: visible;
+        }
+
+        #imagePreview {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1>Expandable Search Form</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 col-md-offset-3">
+            <form action="" class="search-form">
+                <div class="form-group has-feedback">
+                    <label for="search" class="sr-only">Search</label>
+                    <input type="text" class="form-control" name="search" id="search" placeholder="search">
+                    <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCamForm">
+                        Open cam form
+                    </button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addViewForm">
+                        Open view form
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <table class="table table-hover" id="example">
+        <thead>
+            <tr>
+                <th>Created</th>
+                <th>Resolution</th>
+                <th>Camera</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="tableContent">
+        </tbody>
+    </table>
+</div>
+<div id="detailModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body" id="detail-content">
+                <!--<p>Some text in the modal.</p>-->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="previewModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <img id="imagePreview" src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg" alt="preview">
+        </div>
+    </div>
+</div>
+
+<!-- Add cam form modal -->
+<div class="modal fade" id="addCamForm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+    
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Adding view</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+    
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form action="#">
+                        <div class="form-group">
+                            <label for="username">Nazov kamery:</label>
+                            <input type="text" class="form-control" id="username" name="username">
+                        </div>
+                        <select id="cam" class="form-control" onchange="TypeCamSeleced()">
+                            <option value="USB">USB Kamera</option>
+                            <option value="IP">IP Kamera</option>
+                        </select>
+            
+                        <div id ="usb">
+                            Tu bude list usb
+                            <input type="button" class="btn btn-primary" value="Test" />
+                        </div>
+            
+                        <div id="ip">
+                            <div class="form-group">
+                                <label for="acc_name">Nazov kamery:</label>
+                                <input type="text" class="form-control" name="acc_name" id="acc_name"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="acc_pass">Prihlasovacie heslo:</label>
+                                <input type="text" class="form-control" name="acc_pass" id="acc_pass"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_adrss">IP adresa kamery:</label>
+                                <input type="text" class="form-control" name="id_adrss" id="id_adrss"/>
+                            </div>
+                            <!--<input type="button" value="Test" />-->
+                        </div>
+            
+                        <input type="button" value="Submit" class="btn btn-primary" id="addCamSubmit" />
+                    </form>
+                </div>
+    
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+    
+            </div>
+        </div>
+    </div>
+
+
+
+<!-- Add view form modal -->
+<div class="modal fade" id="addViewForm">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Adding view</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form action="#">
+                    <div class="form-group">
+                        <label for="username">Nazov nastavenia:</label>
+                        <input type="text" id="username" name="username">
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="prz_motionDetect">Pohybovy detektor:</label>
+                        <input type="checkbox" 
+                                id="prz_motionDetect" 
+                                name="prz_motionDetect"
+                                class="form-check-input"
+                                onchange="disableInput('intervalmezdiFotkami', this.checked)"
+                                value="prz_motionDetect" 
+                                onclick="DisableInterval()">
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="intervalmezdiFotkami">Interval medzi fotkami:</label>
+                        <input type="number" class="form-control" id="intervalmezdiFotkami" value="0" min="1">
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="prz_novafotka">Nova fotka pri chybe:</label>
+                        <input type="checkbox" 
+                                id="prz_novafotka" 
+                                class="form-check-input"
+                                name="prz_novafotka" 
+                                onchange="disableInput('novaFotkaprichybe', this.checked)"
+                                value="prz_novafotka">
+            
+                        <input type="number" class="form-control" id="novaFotkaprichybe" value="0" min="1">
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="prz_zmaz">Smazat fotku:</label>
+                        <input type="checkbox" 
+                                id="prz_zmaz" 
+                                class="form-check-input"
+                                name="prz_zmaz" 
+                                onchange="disableInput('zmazfotkuC', this.checked)"
+                                value="prz_zmaz">
+            
+                        <input type="number" class="form-control" id="zmazfotkuC" value="0" min="1">
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="prz_rezim">Aplikovat toto nastavenie len v urcitych hodinach:</label>
+                        <input type="checkbox" 
+                               id="prz_rezim" 
+                               class="form-check-input" 
+                               onchange="disableInput('rezim', this.checked)"
+                               name="prz_rezim" 
+                               value="prz_rezim">
+            
+                        <input type="number" class="form-control" id="rezim" value="0" min="1">
+                    </div>
+            
+                    <div>
+                        <input type="button" value="Submit" class="btn btn-primary" id="addViewSubmit" />
+                    </div>
+            
+                </form>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    const URL = "http://127.0.0.1:8081";
+
+    function disableInput(inputId, isDisabled, clear) {
+        const element = document.getElementById(inputId);
+        if (element) {
+            element.disabled = isDisabled;
+            if (isDisabled && clear) {
+                element.value = "";
+            }
+        }
+    }
+
+    function openDetail(item) {
+        console.log("nieco sa deje");
+        const params = {};
+        //posleme HTTP request
+        $.post(URL + "/detail/" + item, params, (detail) => {
+            console.log(params);
+        }, "json");
+    }
+
+    function showImage(item) {
+        const params = {};
+        //posleme HTTP request
+        $.post(URL + "/detail/" + item.id, params, (detail) => {
+            window.open(detail.url, "_blank");
+        }, "json");
+    }
+
+    // toto je funkcia ktorá sa automaticky zavola ked sa cela stranka nacita
+    function init(){
+        const params = {};
+        //posleme HTTP request
+        $.post(URL + "/browse", params, (data) => {
+            // ak je odpoved pole
+            if (Array.isArray(data)) {
+
+                let result = "";
+                // prejdeme celym polom
+                data.forEach((item) => {
+                    // pridame riadok
+                    result += `
+                        <tr>
+                            <td>${item.id}</td>
+                            <td>${item.nazov}</td>
+                            <td>${item.year}</td>
+                            <td class="buttons">
+                                <button type="button" class="btn btn-default btn-sm">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#detailModal" onclick="openDetail(${item.id})">
+                                    <span class="glyphicon glyphicon-info-sign"></span>
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#previewModal">
+                                    <span class="glyphicon glyphicon-eye-open"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                // cely vysledok pridame do tabulky
+                document.getElementById("tableContent").innerHTML = result;
+            }
+        }, "json");
+    };
+
+    
+    $(document).ready(function () {
+        init();
+        onViewInit();
+        onCamInit();
+    });
+    
+
+    // ADD VIEW
+    function onViewInit() {
+        $("#addViewSubmit").click(function () {
+            $.post("URL/addView?" + $("form").serialize(), {}, function (response) {
+                console.log("response");
+            })
+        });
+    }
+
+    // ADD CAM
+    function onCamInit() {
+        $("#addCamSubmit").click(function(){
+            $.post("URL/addCam?" + $("form").serialize(), {}, function(response) {
+                console.log("response");
+            })
+        });
+        $("select").change(function () {
+            alert("Zmenil som selektor");
+        });
+        TypeCamSeleced();
+    }
+
+    function TypeCamSeleced() {
+        const e = document.getElementById("cam");
+        const strUser = e.options[e.selectedIndex].value;
+        console.log(strUser);
+        //takto je to rýchlejšie lebo je to bez JQuery
+        const value = strUser === "IP";
+        document.getElementById("ip").classList.toggle("hidden", value);
+        document.getElementById("usb").classList.toggle("hidden", !value);
+
+        /*
+        // alebo takto s JQuery
+        if(strUser == "IP") {
+            $('#ip').show();
+            $('#usb').hide();
+
+
+        } else {
+            $('#usb').show();
+            $('#ip').hide();
+        }
+        */
+
+    }
+</script>
+</body>
+</html>

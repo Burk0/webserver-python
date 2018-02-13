@@ -3,85 +3,88 @@
 
 <head>
 <meta charset="utf-8">
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
+
+</head>
+    <body>
+        <form action="#">
+            <div>
+                <label for="username">Nazov kamery:</label>
+                <input type="text" id="username" name="username">
+            </div>
+            <select id="cam" onchange="TypeCamSeleced()">
+                <option value="USB">USB Kamera</option>
+                <option value="IP">IP Kamera</option>
+            </select>
+
+            <div id ="usb">
+                Tu bude list usb
+                <input type="button" value="Test" />
+            </div>
+
+            <div id="ip">
+                <div>
+                    <label for="acc_name">Nazov kamery:</label>
+                    <input type="text" name="acc_name" id="acc_name"/>
+                </div>
+                <div>
+                    <label for="acc_pass">Prihlasovacie heslo:</label>
+                    <input type="text" name="acc_pass" id="acc_pass"/>
+                </div>
+                <div>
+                    <label for="id_adrss">IP adresa kamery:</label>
+                    <input type="text" name="id_adrss" id="id_adrss"/>
+                </div>
+                <input type="button" value="Test" />
+            </div>
+
+            <input type="button" value="Submit" id="submit" />
+        </form>
+    </body>
+</html>
 <script>
    const URL = "http://127.0.0.1:8081";
 
     $(document).ready(function(){
-
-                    $("#submit").click(function(){
-
-                                    $.post("URL/addCam?" + $("form").serialize(), {}, function(response) {
-
-                                                    console.log("response");
-
-                                    })
-
-                    });
-
+        $("#submit").click(function(){
+            $.post("URL/addCam?" + $("form").serialize(), {}, function(response) {
+                console.log("response");
+            })
+        });
     });
 
     $("select").change(function () {
         alert("Zmenil som selektor");
-        });
+    });
 
 function TypeCamSeleced() {
+    const e = document.getElementById("cam");
+    const strUser = e.options[e.selectedIndex].value;
+    console.log(strUser);
+    //takto je to rýchlejšie lebo je to bez JQuery
+    const value = strUser === "IP";
+    document.getElementById("ip").classList.toggle("hidden", value);
+    document.getElementById("usb").classList.toggle("hidden", !value);
 
-    <!--alert("You selected some text!");-->
-    var e = document.getElementById("cam");
-    var strUser = e.options[e.selectedIndex].value;
-
+    /*
+    // alebo takto s JQuery
     if(strUser == "IP") {
-        console.log("Som v IP");
-        jQuery('#ip').css('visibility','visible');
-        jQuery('#usb').css('visibility','hidden');
+        $('#ip').show();
+        $('#usb').hide();
 
 
     } else {
-        console.log("Som v USB");
-        jQuery('#usb').css('visibility','visible');
-        jQuery('#ip').css('visibility','hidden');
-
-
+        $('#usb').show();
+        $('#ip').hide();
     }
+    */
 
 }
-
+TypeCamSeleced();
 </script>
-
-</head>
-
-<body>
-
-<form action="#">
-
-    Nazov kamery:<input type="text" name="username"><br />
-
-
-    <select id="cam" onchange="TypeCamSeleced()">
-      <option value="USB">USB Kamera</option>
-      <option value="IP">IP Kamera</option>
-    </select>
-
-
-    <div id ="usb" style="visibility: visible;">
-        Tu bude list usb
-    <input type="button" value="Test" />
-    </div>
-
-    <div id = "ip" style="visibility: hidden;">
-        Prihlasovacie meno: <input type="text" name="acc_name"/>
-        Prihlasovacie heslo: <input type="text" name="acc_pass"/>
-        IP adresa kamery: <input type="text" name="id_adrss"/>
-        <input type="button" value="Test" />
-    </div>
-
-
-<input type="button" value="Submit" id="submit" />
-
-</form>
-
-        </body>
-
-</html>

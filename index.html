@@ -7,7 +7,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
 
@@ -89,27 +88,7 @@
     </div>
 </div>
 <script type="text/javascript">
-
-
     const URL = "http://127.0.0.1:8081";
-
-    <!--const data = [-->
-        <!--{-->
-            <!--created: "12.11.1993 12:00",-->
-            <!--resolution: {x: 1234, y: 4321},-->
-            <!--camera: "Gabova camera"-->
-        <!--},-->
-        <!--{-->
-            <!--created: "12.11.1995 12:00",-->
-            <!--resolution: {x: 123, y: 321},-->
-            <!--camera: "Davidova camera"-->
-        <!--},-->
-        <!--{-->
-            <!--created: "12.11.1996 12:00",-->
-            <!--resolution: {x: 12, y: 21},-->
-            <!--camera: "Mišova camera"-->
-        <!--}-->
-    <!--]-->
 
     function openDetail(item) {
         console.log("nieco sa deje");
@@ -117,9 +96,9 @@
         //posleme HTTP request
         $.post(URL + "/detail/" + item, params, (detail) => {
             console.log(params);
-            <!--document.getElementById("detail-content").innerHTML = `<p>${data}</p>`;-->
         }, "json");
     }
+
     function showImage(item) {
         const params = {};
         //posleme HTTP request
@@ -130,7 +109,6 @@
 
     // toto je funkcia ktorá sa automaticky zavola ked sa cela stranka nacita
     function init(){
-
         const params = {};
         //posleme HTTP request
         $.post(URL + "/browse", params, (data) => {

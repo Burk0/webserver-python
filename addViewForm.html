@@ -2,60 +2,77 @@
 <html lang="en">
 
 <head>
-<meta charset="utf-8">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-<script>
-   const URL = "http://127.0.0.1:8081";
-
-    $(document).ready(function(){
-
-                    $("#submit").click(function(){
-
-                                    $.post("URL/addView?" + $("form").serialize(), {}, function(response) {
-
-                                                    console.log("response");
-
-                                    })
-
-                    });
-
-    });
-
-
-
-    //netestovane zatial !!!!
-    function DisableInterval() {
-        console.log("volam sa");
-        document.getElementById('intervalmezdiFotkami').disabled = true;
-        document.getElementById('intervalmezdiFotkami').value="";
-    }
-
-
-</script>
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 </head>
 
 <body>
+    <form action="#">
+        <div>
+            <label for="username">Nazov nastavenia:</label>
+            <input type="text" id="username" name="username">
+        </div>
 
-<form action="#">
+        <div>
+            <label for="prz_motionDetect">Pohybovy detektor:</label>
+            <input type="checkbox" 
+                   id="prz_motionDetect" 
+                   name="prz_motionDetect" 
+                   onchange="document.getElementById('intervalmezdiFotkami').disabled=this.checked"
+                   value="prz_motionDetect" >
+        </div>
 
-    Nazov nastavenia:<input type="text" name="username"><br />
-    Pohybovy detektor:<input type="checkbox" name="prz_motionDetect" value="prz_motionDetect" onclick="DisableInterval()"><br />
-    Interval medzi fotkami:<input type="number" id="intervalmezdiFotkami" value="0" min="1"> <br /><!-- ak je vybraty MD potrebujem toto zadisable-->
-    Nova fotka pri chybe:<input type="checkbox" name="prz_novafotka" value="prz_novafotka">
-    <input type="number" id="novaFotkaprichybe" value="0" min="1"><br />
-    Smazat fotku:<input type="checkbox" name="prz_zmaz" value="prz_zmaz">
-    <input type="number" id="zmazfotkuC" value="0" min="1"><br />
-    Aplikovat toto nastavenie len v urcitych hodinach:<input type="checkbox" name="prz_rezim" value="prz_rezim">
-    <input type="number" id="rezim" value="0" min="1"><br />
+        <div>
+            <label for="intervalmezdiFotkami">Interval medzi fotkami:</label>
+            <input type="number" id="intervalmezdiFotkami" value="0" min="1">
+        </div>
 
+        <div>
+            <label for="prz_novafotka">Nova fotka pri chybe:</label>
+            <input type="checkbox" 
+                   id="prz_novafotka" 
+                   name="prz_novafotka" 
+                   onchange="document.getElementById('novaFotkaprichybe').disabled=this.checked"
+                   value="prz_novafotka">
 
+            <input type="number" id="novaFotkaprichybe" value="0" min="1">
+        </div>
 
-<input type="button" value="Submit" id="submit" />
+        <div>
+            <label for="prz_zmaz">Smazat fotku:</label>
+            <input type="checkbox" 
+                   id="prz_zmaz" 
+                   name="prz_zmaz" 
+                   onchange="document.getElementById('zmazfotkuC').disabled=this.checked"
+                   value="prz_zmaz">
 
-</form>
+            <input type="number" id="zmazfotkuC" value="0" min="1">
+        </div>
 
-        </body>
+        <div>
+            <label for="prz_rezim">Aplikovat toto nastavenie len v urcitych hodinach:</label>
+            <input type="checkbox" id="prz_rezim" name="prz_rezim" value="prz_rezim">
+
+            <input type="number" id="rezim" value="0" min="1">
+        </div>
+
+        <div>
+            <input type="button" value="Submit" id="submit" />
+        </div>
+
+    </form>
+
+</body>
 
 </html>
+<script>
+    const URL = "http://127.0.0.1:8081";
+    $(document).ready(function () {
+        $("#submit").click(function () {
+            $.post("URL/addView?" + $("form").serialize(), {}, function (response) {
+                console.log("response");
+            })
+        });
+    });
+</script>
