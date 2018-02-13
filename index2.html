@@ -55,17 +55,17 @@
             <ul class="nav nav-tabs">
                 <li class="active">
                     <a data-toggle="tab" href="#shots">
-                        Snímky <span class="badge">37</span>
+                        Snímky <span class="badge" id="shotsCount"></span>
                     </a>
                 </li>
                 <li>
                     <a data-toggle="tab" href="#cameras">
-                        Kamery <span class="badge">5</span>
+                        Kamery <span class="badge" id="camerasCount"></span>
                     </a>
                 </li>
                 <li>
                     <a data-toggle="tab" href="#options">
-                        Nastavenia <span class="badge">15</span>
+                        Nastavenia <span class="badge" id="optionsCount"></span>
                     </a>
                 </li>
             </ul>
@@ -118,32 +118,6 @@
                 </tr>
                 </thead>
                 <tbody id="tableCamerasContent">
-                <tr>
-                    <td>Moja najlepšia a zároveň jediná kamera</td>
-                    <td>IP</td>
-                    <td>UTC-2000</td>
-                    <td>
-                        <button type="button"
-                                class="btn btn-default btn-sm"
-                                onclick="openCameraDetail(0)"
-                                data-toggle="modal"
-                                data-target="#detailCamForm">
-                            <span class="glyphicon glyphicon-info-sign"></span>
-                        </button>
-                        <button type="button"
-                                class="btn btn-default btn-sm"
-                                onclick="openCameraDetail(0, false)"
-                                data-toggle="modal"
-                                data-target="#detailCamForm">
-                            <span class="glyphicon glyphicon-edit"></span>
-                        </button>
-                        <button type="button"
-                                class="btn btn-default btn-sm"
-                                onclick="removeCamera(1)">
-                            <span class="glyphicon glyphicon-trash"></span>
-                        </button>
-                    </td>
-                </tr>
                 </tbody>
             </table>
             <button type="button"
@@ -164,33 +138,6 @@
                 </tr>
                 </thead>
                 <tbody id="tableOptionsContent">
-                <tr>
-                    <td>Tajné nastavenie</td>
-                    <td>Moja najlepšia a zároveň jediná kamera</td>
-                    <td>
-                        <button type="button"
-                                class="btn btn-default btn-sm"
-                                onclick="openOptionDetail(0)"
-                                data-toggle="modal"
-                                data-target="#detailViewForm">
-                            <span class="glyphicon glyphicon-info-sign"></span>
-                        </button>
-                        <button type="button"
-                                class="btn btn-default btn-sm"
-                                onclick="openOptionDetail(0, false)"
-                                data-toggle="modal"
-                                data-target="#detailViewForm">
-                            <span class="glyphicon glyphicon-edit"></span>
-                        </button>
-                        <button type="button"
-                                class="btn btn-default btn-sm"
-                                onclick="removeOption(1)">
-                            <span class="glyphicon glyphicon-trash"></span>
-                        </button>
-                    </td>
-
-
-                </tr>
                 </tbody>
             </table>
             <button type="button"
@@ -413,18 +360,20 @@
         element.disabled = disabled;
     };
 
-    function removeCamera(index) {
-        cameras.splice(index, 1);
-        setCameras();
-    }
+    const remove = {
+        camera(index) {
+            cameras.splice(index, 1);
+            set.cameras();
+        },
+        option(index) {
+            options.splice(index, 1);
+            set.options();
+        }
+    };
+
     function removeShot(index) {
         $("#tableShotsContent").find("tr:nth-child(" + index + ")").remove();
     }
-    function removeOption(index) {
-        options.splice(index, 1);
-        setOptions();
-    }
-
     function openCameraDetail(cameraId = "new", disabled) {
         const buttonEdit = document.getElementById("cameraDetailEdit");
         const buttonSubmit = document.getElementById("cameraDetailSubmit");
@@ -592,56 +541,58 @@
 
 
         // posleme HTTP request pre kamier
-        const resultCameras = [{
-            name: "Moja najlepšia a zároveň jediná kamera",
-            type: "IP",
-            password: "tajneHeslo222",
-            address: "127.0.0.1",
-            camera: "UTC-2000",
-        },{
-            name: "Moja druhá najlepšia a zároveň jediná kamera",
-            type: "IP",
-            password: "superTajneHeslo111",
-            address: "127.0.0.2",
-            camera: "UTC-1000",
-        }];
+        (function (){
+            const resultCameras = [{
+                name: "Moja najlepšia a zároveň jediná kamera",
+                type: "IP",
+                password: "tajneHeslo222",
+                address: "127.0.0.1",
+                camera: "UTC-2000",
+            },{
+                name: "Moja druhá najlepšia a zároveň jediná kamera",
+                type: "IP",
+                password: "superTajneHeslo111",
+                address: "127.0.0.2",
+                camera: "UTC-1000",
+            }];
 
-        while(cameras.length){
-            cameras.splice(0, 1);
-        }
-        cameras.push.apply(cameras, resultCameras);
-        setCameras();
-
+            while(cameras.length){
+                cameras.splice(0, 1);
+            }
+            cameras.push.apply(cameras, resultCameras);
+            set.cameras();
+        })();
 
         // posleme HTTP request pre nastavení
+        (function (){
+            const resultOptions = [{
+                name: "Tajné nastavenie",
+                cameraName: "Moja najlepšia a zároveň jediná kamera",
+                motionDetect: true,
+                motionDetectDelay: 60,
+                photoOnMove: true,
+                photoOnMoveValue: 123,
+                deletePhoto: true,
+                deletePhotoValue: 321,
+                activeTime: true,
+                activeTimeValue: 1111,
+            },{
+                name: "Mega super nastavenie",
+                cameraName: "Moja najlepšia a zároveň jediná kamera",
+                motionDetect: true,
+                motionDetectDelay: 60,
+                photoOnMove: false,
+                deletePhoto: true,
+                deletePhotoValue: 321,
+                activeTime: false,
+            }];
 
-        const resultOptions = [{
-            name: "Tajné nastavenie",
-            cameraName: "Moja najlepšia a zároveň jediná kamera",
-            motionDetect: true,
-            motionDetectDelay: 60,
-            photoOnMove: true,
-            photoOnMoveValue: 123,
-            deletePhoto: true,
-            deletePhotoValue: 321,
-            activeTime: true,
-            activeTimeValue: 1111,
-        },{
-            name: "Mega super nastavenie",
-            cameraName: "Moja najlepšia a zároveň jediná kamera",
-            motionDetect: true,
-            motionDetectDelay: 60,
-            photoOnMove: false,
-            deletePhoto: true,
-            deletePhotoValue: 321,
-            activeTime: false,
-        }];
-
-        while(options.length){
-            options.splice(0, 1);
-        }
-        options.push.apply(options, resultOptions);
-        setOptions();
+            while(options.length){
+                options.splice(0, 1);
+            }
+            options.push.apply(options, resultOptions);
+            set.options();
+        })();
     }
 
     // Init options detail modal
@@ -682,11 +633,13 @@
         onCamInit();
     });
 
-    function setCameras() {
-        let innerHtml = "";
-        cameras.forEach((camera, index) => {
-            // cameras.push(camera);
-            innerHtml += `
+    const set = {
+        cameras() {
+            document.getElementById("camerasCount").innerText = cameras.length;
+            let innerHtml = "";
+            cameras.forEach((camera, index) => {
+                // cameras.push(camera);
+                innerHtml += `
                 <tr>
                     <td>${camera.name}</td>
                     <td>${camera.type}</td>
@@ -708,21 +661,20 @@
                         </button>
                         <button type="button"
                                 class="btn btn-default btn-sm"
-                                onclick="removeCamera(${index})">
+                                onclick="remove.camera(${index})">
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
                     </td>
                 </tr>
             `
-        });
-        camerasBody.innerHTML = innerHtml;
-    }
-
-    function setOptions() {
-
-        let innerHtml = "";
-        options.forEach((option, index) => {
-            innerHtml += `
+            });
+            camerasBody.innerHTML = innerHtml;
+        },
+        options() {
+            document.getElementById("optionsCount").innerText = options.length;
+            let innerHtml = "";
+            options.forEach((option, index) => {
+                innerHtml += `
                 <tr>
                     <td>${option.name}</td>
                     <td>${option.cameraName}</td>
@@ -743,7 +695,7 @@
                         </button>
                         <button type="button"
                                 class="btn btn-default btn-sm"
-                                onclick="removeOption(${index})">
+                                onclick="remove.option(${index})">
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
                     </td>
@@ -751,9 +703,10 @@
 
                 </tr>
             `
-        });
-        optionsBody.innerHTML = innerHtml;
-    }
+            });
+            optionsBody.innerHTML = innerHtml;
+        }
+    };
 </script>
 </body>
 </html>
