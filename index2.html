@@ -48,21 +48,27 @@
         <div class="col-md-4 col-md-offset-3">
             <form action="" class="search-form">
                 <div class="form-group has-feedback">
-                    <label for="search" class="sr-only">Search</label>
+                    <label for="search" class="sr-only">Hľadať</label>
                     <input type="text" class="form-control" name="search" id="search" placeholder="search">
                     <span class="glyphicon glyphicon-search form-control-feedback"></span>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCamForm">
-                       Vytvoriť kameru
-                    </button>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addViewForm">
-                        Vytvoriť náhlad
-                    </button>
                 </div>
             </form>
             <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#shots">Snímky</a></li>
-                <li><a data-toggle="tab" href="#cameras">Kamery</a></li>
-                <li><a data-toggle="tab" href="#options">Nastavenia</a></li>
+                <li class="active">
+                    <a data-toggle="tab" href="#shots">
+                        Snímky <span class="badge">37</span>
+                    </a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#cameras">
+                        Kamery <span class="badge">5</span>
+                    </a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#options">
+                        Nastavenia <span class="badge">15</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
@@ -81,6 +87,19 @@
                 </tr>
                 </thead>
                 <tbody id="tableContent">
+                <tr>
+                    <td>12.11.1993</td>
+                    <td>800x600</td>
+                    <td>UTC-2000</td>
+                    <td>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                data-toggle="modal"
+                                data-target="#previewModal">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </button>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -95,8 +114,29 @@
                 </tr>
                 </thead>
                 <tbody id="tableCamerasContent">
+                <tr>
+                    <td>Moja najlepšia a zároveň jediná kamera</td>
+                    <td>IP</td>
+                    <td>UTC-2000</td>
+                    <td>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                onclick="openCameraDetail(0)"
+                                data-toggle="modal"
+                                data-target="#addCamForm">
+                            <span class="glyphicon glyphicon-info-sign"></span>
+                        </button>
+                    </td>
+                </tr>
                 </tbody>
             </table>
+            <button type="button"
+                    class="btn btn-primary"
+                    onclick="openCameraDetail('new')"
+                    data-toggle="modal"
+                    data-target="#addCamForm">
+                Nová kamera
+            </button>
         </div>
         <div id="options" class="tab-pane fade">
             <table class="table table-hover" id="tableOptions">
@@ -107,8 +147,27 @@
                 </tr>
                 </thead>
                 <tbody id="tableOptionsContent">
+                <tr>
+                    <td>Moja najlepšia a zároveň jediná kamera</td>
+                    <td>
+                        <button type="button"
+                                class="btn btn-default btn-sm"
+                                onclick="openOptionDetail(0)"
+                                data-toggle="modal"
+                                data-target="#addViewForm">
+                            <span class="glyphicon glyphicon-info-sign"></span>
+                        </button>
+                    </td>
+                </tr>
                 </tbody>
             </table>
+            <button type="button"
+                    class="btn btn-primary"
+                    onclick="openOptionDetail('new')"
+                    data-toggle="modal"
+                    data-target="#addViewForm">
+                Nové nastavenie
+            </button>
         </div>
     </div>
 </div>
@@ -141,14 +200,14 @@
     </div>
 </div>
 
-<!-- Add cam form modal -->
+<!-- Camera detail form modal -->
 <div class="modal fade" id="addCamForm">
     <div class="modal-dialog">
         <div class="modal-content">
 
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title">Adding view</h4>
+                <h4 class="modal-title">Detail kamery</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
@@ -171,7 +230,7 @@
 
                     <div id="ip">
                         <div class="form-group">
-                            <label for="acc_name">Nazov kamery:</label>
+                            <label for="acc_name">Kamery:</label>
                             <input type="text" class="form-control" name="acc_name" id="acc_name"/>
                         </div>
                         <div class="form-group">
@@ -184,8 +243,12 @@
                         </div>
                         <!--<input type="button" value="Test" />-->
                     </div>
-
-                    <input type="button" value="Submit" class="btn btn-primary" id="addCamSubmit"/>
+                    <input type="button"
+                           value="Upraviť"
+                           class="btn btn-primary hidden"
+                           onclick="openCameraDetail(null, false)"
+                           id="cameraDetailEdit"/>
+                    <input type="button" value="Uložiť" class="btn btn-primary hidden" id="cameraDetailSubmit"/>
                 </form>
             </div>
 
@@ -198,7 +261,7 @@
     </div>
 </div>
 
-<!-- Add view form modal -->
+<!-- Option detail form modal -->
 <div class="modal fade" id="addViewForm">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -213,8 +276,8 @@
             <div class="modal-body">
                 <form action="#">
                     <div class="form-group">
-                        <label for="username">Nazov nastavenia:</label>
-                        <input type="text" class="form-control" id="username" name="username">
+                        <label for="optionName">Nazov nastavenia:</label>
+                        <input type="text" class="form-control" id="optionName" name="optionName">
                     </div>
 
                     <div class="form-group">
@@ -283,10 +346,12 @@
                                min="1">
                     </div>
 
-                    <div>
-                        <input type="button" value="Submit" class="btn btn-primary" id="addViewSubmit"/>
-                    </div>
-
+                    <input type="button"
+                           value="Upraviť"
+                           class="btn btn-primary hidden"
+                           onclick="openOptionDetail(null, false)"
+                           id="optionDetailEdit"/>
+                    <input type="button" value="Uložiť" class="btn btn-primary hidden" id="optionDetailSubmit"/>
                 </form>
             </div>
 
@@ -301,6 +366,138 @@
 
 <script type="text/javascript">
     const URL = "http://127.0.0.1:8081";
+
+    function openCameraDetail(cameraId = "new", disabled) {
+        const setAndDisable = (element, value, disabled) => {
+            element.value = value;
+            element.disabled = disabled;
+            console.log(element, disabled);
+        };
+        const buttonEdit = document.getElementById("cameraDetailEdit");
+        const buttonSubmit = document.getElementById("cameraDetailSubmit");
+
+        const inputCameraName = document.getElementById("cameraName");
+        const inputCamera = document.getElementById("acc_name");
+        const inputPassword = document.getElementById("acc_pass");
+        const inputIpAddress = document.getElementById("id_adrss");
+        const inputCameraType = document.getElementById("cam");
+
+        const camera = {
+            name: "Moja najlepšia a zároveň jediná kamera",
+            type: "IP",
+            password: "tajneHeslo222",
+            address: "127.0.0.1",
+            camera: "UTC-2000",
+        };
+
+        disabled = typeof disabled === "undefined" ? cameraId !== "new" : disabled;
+
+        buttonEdit.classList.toggle("hidden", !disabled);
+        buttonSubmit.classList.toggle("hidden", disabled);
+
+        // vytvára sa nová kamera
+        if (cameraId === "new") {
+            setAndDisable(inputCamera, "", disabled);
+            setAndDisable(inputPassword, "", disabled);
+            setAndDisable(inputIpAddress, "", disabled);
+            setAndDisable(inputCameraType, "IP", disabled);
+            setAndDisable(inputCameraName, "", disabled);
+        }
+        // iba sa mení disablovanie inputov
+        else if (typeof cameraId === "object"){
+            setAndDisable(inputCamera, inputCamera.value, disabled);
+            setAndDisable(inputPassword, inputPassword.value, disabled);
+            setAndDisable(inputIpAddress, inputIpAddress.value, disabled);
+            setAndDisable(inputCameraType, inputCameraType.value, disabled);
+            setAndDisable(inputCameraName, inputCameraName.value, disabled);
+        }
+        // zobrazuje sa detail
+        else {
+            setAndDisable(inputCamera, camera.type, disabled);
+            setAndDisable(inputPassword, camera.password, disabled);
+            setAndDisable(inputIpAddress, camera.address, disabled);
+            setAndDisable(inputCameraType, camera.type, disabled);
+            setAndDisable(inputCameraName, camera.name, disabled);
+        }
+    }
+
+    function openOptionDetail(optionId = "new", disabled) {
+        const setAndDisable = (element, value, disabled) => {
+            if (element.type === "checkbox") {
+                element.checked = !!value;
+            }
+            else {
+                element.value = value;
+            }
+            element.disabled = disabled;
+        };
+        const buttonEdit = document.getElementById("optionDetailEdit");
+        const buttonSubmit = document.getElementById("optionDetailSubmit");
+
+        const inputOptionName = document.getElementById("optionName");
+        const inputOptionMotionDetect = document.getElementById("prz_motionDetect");
+        const inputOptionMotionDetectDelay = document.getElementById("intervalmezdiFotkami");
+        const inputPhotoOnMove = document.getElementById("prz_novafotka");
+        const inputPhotoOnMoveValue = document.getElementById("novaFotkaprichybe");
+        const inputDeletePhoto = document.getElementById("prz_zmaz");
+        const inputDeletePhotoValue = document.getElementById("zmazfotkuC");
+        const inputActiveTime = document.getElementById("prz_rezim");
+        const inputActiveTimeValue = document.getElementById("rezim");
+
+        const Option = {
+            name: "Tajné nastavenie",
+            motionDetect: true,
+            motionDetectDelay: 60,
+            photoOnMove: true,
+            photoOnMoveValue: 123,
+            deletePhoto: true,
+            deletePhotoValue: 321,
+            activeTime: true,
+            activeTimeValue: 1111,
+        };
+
+        disabled = typeof disabled === "undefined" ? optionId !== "new" : disabled;
+
+        buttonEdit.classList.toggle("hidden", !disabled);
+        buttonSubmit.classList.toggle("hidden", disabled);
+
+        // vytvára sa nová kamera
+        if (optionId === "new") {
+            setAndDisable(inputOptionName, "", disabled);
+            setAndDisable(inputOptionMotionDetect, "", disabled);
+            setAndDisable(inputOptionMotionDetectDelay, "", disabled);
+            setAndDisable(inputPhotoOnMove, "", disabled);
+            setAndDisable(inputPhotoOnMoveValue, "", disabled);
+            setAndDisable(inputDeletePhoto, "", disabled);
+            setAndDisable(inputDeletePhotoValue, "", disabled);
+            setAndDisable(inputActiveTime, "", disabled);
+            setAndDisable(inputActiveTimeValue, "", disabled);
+        }
+        // iba sa mení disablovanie inputov
+        else if (typeof optionId === "object"){
+            setAndDisable(inputOptionName, inputOptionName.value, disabled);
+            setAndDisable(inputOptionMotionDetect, inputOptionMotionDetect.checked, disabled);
+            setAndDisable(inputOptionMotionDetectDelay, inputOptionMotionDetectDelay.value, disabled);
+            setAndDisable(inputPhotoOnMove, inputPhotoOnMove.checked, disabled);
+            setAndDisable(inputPhotoOnMoveValue, inputPhotoOnMoveValue.value, disabled);
+            setAndDisable(inputDeletePhoto, inputDeletePhoto.checked, disabled);
+            setAndDisable(inputDeletePhotoValue, inputDeletePhotoValue.value, disabled);
+            setAndDisable(inputActiveTime, inputActiveTime.checked, disabled);
+            setAndDisable(inputActiveTimeValue, inputActiveTimeValue.value, disabled);
+        }
+        // zobrazuje sa detail
+        else {
+            setAndDisable(inputOptionName, Option.name, disabled);
+            setAndDisable(inputOptionMotionDetect, Option.motionDetect, disabled);
+            setAndDisable(inputOptionMotionDetectDelay, Option.motionDetectDelay, disabled);
+            setAndDisable(inputPhotoOnMove, Option.photoOnMove, disabled);
+            setAndDisable(inputPhotoOnMoveValue, Option.photoOnMoveValue, disabled);
+            setAndDisable(inputDeletePhoto, Option.deletePhoto, disabled);
+            setAndDisable(inputDeletePhotoValue, Option.deletePhotoValue, disabled);
+            setAndDisable(inputActiveTime, Option.activeTime, disabled);
+            setAndDisable(inputActiveTimeValue, Option.activeTimeValue, disabled);
+        }
+    }
 
     function disableInput(inputId, isDisabled, shouldClearElement = false) {
         const element = document.getElementById(inputId);
@@ -392,7 +589,7 @@
         const ipElement = document.getElementById("ip");
         const usbElement = document.getElementById("usb");
 
-        $("#addCamSubmit").click(function () {
+        $("#cameraDetailSubmit").click(function () {
             $.post("URL/addCam?" + $("form").serialize(), {}, function (response) {
                 console.log("response: ", response);
             })
