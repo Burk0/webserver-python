@@ -54,13 +54,13 @@
     </div>
     <div class="row">
         <div class="col-md-4 col-md-offset-3">
-            <form action="" class="search-form">
+            <!--<form action="" class="search-form">-->
                 <div class="form-group has-feedback">
                     <label for="search" class="sr-only">Hľadať</label>
-                    <input type="text" class="form-control" name="search" id="search" placeholder="search">
+                    <input type="text" class="form-control" name="search" id="search" placeholder="Hľadať">
                     <span class="glyphicon glyphicon-search form-control-feedback"></span>
                 </div>
-            </form>
+            <!--</form>-->
             <ul class="nav nav-tabs">
                 <li class="active">
                     <a data-toggle="tab" href="#shots">
@@ -353,10 +353,19 @@
 </div>
 
 <script type="text/javascript">
-    const cameras = [];
-    const options = [];
-    const shots = [];
-    const camerasBody = document.getElementById("tableCamerasContent");
+    const elements = {
+        searchInput: document.getElementById("search"),
+        camerasBody: document.getElementById("tableCamerasContent"),
+        camerasCount: document.getElementById("camerasCount"),
+        optionsBody: document.getElementById("tableOptionsContent"),
+        optionsCount: document.getElementById("optionsCount")
+    };
+    const data = {
+        cameras: [],
+        options: [],
+        shots: []
+    };
+    // const camerasBody = document.getElementById("tableCamerasContent");
     const optionsBody = document.getElementById("tableOptionsContent");
     const URL = "http://127.0.0.1:8081";
     const setAndDisable = (element, value, disabled) => {
@@ -371,11 +380,11 @@
 
     const remove = {
         camera(index) {
-            cameras.splice(index, 1);
+            data.cameras.splice(index, 1);
             set.cameras();
         },
         option(index) {
-            options.splice(index, 1);
+            data.options.splice(index, 1);
             set.options();
         }
     };
@@ -393,7 +402,7 @@
         const inputIpAddress = document.getElementById("id_adrss");
         const inputCameraType = document.getElementById("cam");
 
-        const camera = cameras[cameraId];
+        const camera = data.cameras[cameraId];
 
         disabled = typeof disabled === "undefined" ? cameraId !== "new" : disabled;
 
@@ -440,7 +449,7 @@
         const inputActiveTime = document.getElementById("prz_rezim");
         const inputActiveTimeValue = document.getElementById("rezim");
 
-        const Option = options[optionId];
+        const Option = data.options[optionId];
 
         disabled = typeof disabled === "undefined" ? optionId !== "new" : disabled;
 
@@ -548,6 +557,13 @@
             }
         }, "json");
 
+        elements.searchInput.onkeyup = (event) => {
+            // if (event.keyCode === 13) { //Enter
+                // alert("vyhladávam slovo: " + event.target.value);
+                set.cameras();
+                set.options();
+            // }
+        };
 
         // posleme HTTP request pre kamier
         (function (){
@@ -565,10 +581,10 @@
                 camera: "UTC-1000",
             }];
 
-            while(cameras.length){
-                cameras.splice(0, 1);
+            while(data.cameras.length){
+                data.cameras.splice(0, 1);
             }
-            cameras.push.apply(cameras, resultCameras);
+            data.cameras.push.apply(data.cameras, resultCameras);
             set.cameras();
         })();
 
@@ -596,10 +612,10 @@
                 activeTime: false,
             }];
 
-            while(options.length){
-                options.splice(0, 1);
+            while(data.options.length){
+                data.options.splice(0, 1);
             }
-            options.push.apply(options, resultOptions);
+            data.options.push.apply(data.options, resultOptions);
             set.options();
         })();
     }
@@ -644,10 +660,17 @@
 
     const set = {
         cameras() {
-            document.getElementById("camerasCount").innerText = cameras.length;
+            const searchKey = elements.searchInput.value.toLowerCase();
             let innerHtml = "";
-            cameras.forEach((camera, index) => {
-                // cameras.push(camera);
+            let count = 0;
+            data.cameras.forEach((camera, index) => {
+                if (searchKey &&
+                    camera.name.toLowerCase().indexOf(searchKey) < 0 &&
+                    camera.type.toLowerCase().indexOf(searchKey) < 0 &&
+                    camera.camera.toLowerCase().indexOf(searchKey) < 0 ) {
+                    return;
+                }
+                count++;
                 innerHtml += `
                 <tr>
                     <td>${camera.name}</td>
@@ -677,12 +700,21 @@
                 </tr>
             `
             });
-            camerasBody.innerHTML = innerHtml;
+            elements.camerasCount.innerText = count;
+            elements.camerasBody.innerHTML = innerHtml;
         },
         options() {
-            document.getElementById("optionsCount").innerText = options.length;
+            const searchKey = elements.searchInput.value.toLowerCase();
+            elements.optionsCount.innerText = data.options.length;
             let innerHtml = "";
-            options.forEach((option, index) => {
+            let count = 0;
+            data.options.forEach((option, index) => {
+                if (searchKey &&
+                    option.name.toLowerCase().indexOf(searchKey) < 0 &&
+                    option.cameraName.toLowerCase().indexOf(searchKey) < 0 ) {
+                    return;
+                }
+                count++;
                 innerHtml += `
                 <tr>
                     <td>${option.name}</td>
@@ -713,7 +745,8 @@
                 </tr>
             `
             });
-            optionsBody.innerHTML = innerHtml;
+            elements.optionsCount.innerText = count;
+            elements.optionsBody.innerHTML = innerHtml;
         }
     };
 </script>
