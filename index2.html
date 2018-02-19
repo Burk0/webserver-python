@@ -90,10 +90,10 @@
                     <table class="table table-hover" id="example">
                         <thead>
                         <tr>
-                            <th>Vytvorené</th>
-                            <th>Rozlíšenie</th>
-                            <th>Kamera</th>
-                            <th></th>
+                            <th>ID</th>
+                            <th>Názov</th>
+                            <th>Poznámka</th>
+                            <th>Vytvorena</th>
                         </tr>
                         </thead>
                         <tbody id="tableShotsContent">
@@ -547,9 +547,10 @@
                                 // pridame riadok
                                 result += `
                                 <tr>
-                                    <td>${item.id}</td>
-                                    <td>${item.nazov}</td>
-                                    <td>${item.year}</td>
+                                    <td>${item.s_id}</td>
+                                    <td>${item.s_nazov}</td>
+                                    <td>${item.s_Vytvorena}</td>
+                                    <td>${item.s_poznamka}</td>
                                     <td class="buttons">
                                         <button type="button" class="btn btn-default btn-sm">
                                             <span class="glyphicon glyphicon-remove"></span>

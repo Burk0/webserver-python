@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 import psycopg2
-import obj
+import snimka,kamera,view
 import json
+import datetime
 
 def getData():
 #     rows = [(298669, 'Disaster to Submarine Boat A.1 ', 74, 4, 1990, 'XVAJIbdRSKG385l8ZcTU2W0FIYp0FV27f50RPMlgUwbEwJV0xj9ROZEhBXDG0bocjCPTOSO8R9eqSjnjmtWGaRCIKzos02B9TTQt'),
@@ -25,23 +26,37 @@ def getData():
 # (298686, 'Disastro ferroviario a Montecchio ', 151, 2, 1973, '9MLezpOUhTkhWlIch2Q8RcEccH1wVTobMY1Sn6mYIFvsc00PeJZ78Mtt7rEQ3z1EZwfBjkMitjh9IvowENbsXflDiZN7knVUz,lBY'),
 # (298687, 'Disastro ferroviario a Montecelio ', 121, 5, 1949, 'smMB1x1xGu6EgxDK6mKzJLHC7NH7aHkL2ZSwta1SadyefUwdangvhWSX6J9PRV4ndHgSDCDWfFXWaZ4ag0g2wtVTwOeSQF4iN4n7'),
 # (298688, 'Disastrous Flirtation ', 86, 5, 1944, 'h24i3ArEvsyXOyyVSmryMRgnVGdwUYl5BT6lV3Zikb6gnpTe99nZ1i5rbrHBM7eRqVfl8jfdlQWn6fRJikSJc0ZFHn6UH1g1QKF3')]
-    connect_str = "dbname='dbs_projekt' user='postgres' host='localhost' " + \
+    connect_str = "dbname='Bc_new' user='postgres' host='localhost' " + \
               "password='admin1234'"
 
     conn = psycopg2.connect(connect_str)
     cursor = conn.cursor()
     list=[]
+    listKamier=[]
+    listNastaveni=[]
 
     try:
-        cursor.execute("select * from movies limit 20")
-        print("ok")
+        cursor.execute("select * from snimka")
+        # print("ok")
         rows = cursor.fetchall()
-        print(len(rows))
+        # print(len(rows))
         for r in rows:
             # print(r[0])
-            list.append(obj.obj(r[0],r[1],r[4],r[5]))
+            list.append(snimka.Snimka(r[0],r[1],r[3],r[6]))
 
 
+        cursor.execute("select * from kamera")
+        rows=cursor.fetchall()
+        for r in rows:
+            listKamier.append(kamera.Kamera(r[0],r[1],r[2]))
+
+
+        cursor.execute("select v.view_id,v.view_meno,k.kamera_meno from view v join kamera k ON k.kamera_id = v.view_id")
+        rows=cursor.fetchall()
+        for r in rows:
+            listNastaveni.append(view.View(r[0],r[1],r[2]))
+
+        cursor.close()
     except Exception as e:
                 print("Uh oh, can't connect. Invalid dbname, user or password?")
                 print(e)
@@ -50,13 +65,28 @@ def getData():
     #     print(str(list[0].id))
     # print(list)
     data = []
+    # data.append('snimka:')
     for i in range(len(list)):
-        data.append({'id':list[i].id,'nazov':list[i].title, 'year':list[i].year})
+        data.append({'s_id':list[i].id,'s_nazov':list[i].nazov, 's_poznamka':list[i].poznamka, 's_Vytvorena':list[i].vytvorena})
 
 
-    # print(json.dumps(data))
+    # data.append('kamera:')
+    for i in range(len(listKamier)):
+        data.append({'k_id': listKamier[i].id, 'k_nazov': listKamier[i].nazov, 'k_typ': listKamier[i].typ})
 
-    return json.dumps(data)
+
+    # data.append('nastavenie:')
+    for i in range(len(listNastaveni)):
+        data.append({'n_id': listNastaveni[i].id, 'n_nazov': listNastaveni[i].nazov, 'n_kamera_meno': listNastaveni[i].kamera_meno})
+
+
+    def myconverter(o):
+        if isinstance(o, datetime.datetime):
+            return o.__str__()
+
+    print(json.dumps(data, default=myconverter))
+
+    return json.dumps(data,default=myconverter)
 
 
 def getDetail(id):

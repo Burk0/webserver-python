@@ -9,7 +9,7 @@ import cgi,cgitb
 cgitb.enable() #for debugging
 
 class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
-    Page = open('index.html')
+    # Page = open('index.html')
     # json_string = json.dumps(backend.getData())
 
     # Page = '''\
@@ -40,13 +40,13 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
     def do_GET(self):
         # page = self.create_page()
-        if self.path.endswith("/browse"):
-            self.send_page('index.html')
-        elif self.path.endswith("/cams"):
-        #     print("ina stranka")
-            self.send_page('addCamForm.html')
-        elif self.path.endswith("/views"):
-            self.send_page('addViewForm.html')
+        # if self.path.endswith("/browse"):
+        self.send_page('index2.html')
+        # elif self.path.endswith("/cams"):
+        # #     print("ina stranka")
+        #     self.send_page('addCamForm.html')
+        # elif self.path.endswith("/views"):
+        #     self.send_page('addViewForm.html')
 
 
 
@@ -62,7 +62,7 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
 
     def do_POST(self):
-        # print(self.path)
+        print(self.path)
         if self.path.endswith("/browse"):
             print(self.path)
             self.send_response(200)
@@ -79,11 +79,11 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
             print(self.path)
             # content_length = int(self.headers['Content-Length'])
             # print(self.rfile.read(content_length))
-            form = cgi.FieldStorage()
-
-            username = form.getvalue("username")
-
-            print(username)
+            # form = cgi.FieldStorage()
+            #
+            # username = form.getvalue("username")
+            #
+            # print(username)
 
         elif "/addView" in self.path:
             print(self.path)
@@ -98,7 +98,7 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
 def run():
     print('starting server...')
-    server_address = ('127.0.0.1', 8082)
+    server_address = ('127.0.0.1', 8081)
 
     httpd = HTTPServer(server_address,testHTTPServer_RequestHanlder)
     print('running server...')
