@@ -266,6 +266,13 @@
                     <div class="modal-body">
                         <form action="#">
                             <div class="form-group">
+                                <label for="selectedCameraToOption">Kamera:</label>
+                                <select class="js-example-basic-single"
+                                        id="selectedCameraToOption"
+                                        style="width: 100%"
+                                        name="state"></select>
+                            </div>
+                            <div class="form-group">
                                 <label for="optionName">Nazov nastavenia:</label>
                                 <input type="text" class="form-control" id="optionName" name="optionName">
                             </div>
@@ -283,13 +290,6 @@
                             <div class="form-group">
                                 <label for="intervalmezdiFotkami">Interval medzi fotkami:</label>
                                 <input type="number" class="form-control" id="intervalmezdiFotkami" value="0" min="1">
-                            </div>
-                            <div class="form-group">
-                                <label for="selectedCameraToOption">Kamera:</label>
-                                <select class="js-example-basic-single"
-                                        id="selectedCameraToOption"
-                                        style="width: 100%"
-                                        name="state"></select>
                             </div>
                             <div class="form-group">
                                 <label for="prz_novafotka">Nova fotka pri chybe:</label>
@@ -769,7 +769,10 @@
                 const html = "<option></option>" + data.cameras.map((camera) => {
                     return `<option value="${camera.name}">${camera.name}</option>`;
                 }).join("");
-                $('.js-example-basic-single').html(html).select2();
+                $('.js-example-basic-single').html(html).select2({
+                    placeholder: 'Kamera pre ktorú sú určené nastavenia',
+                    allowClear: true
+                });
             });
 
         </script>
