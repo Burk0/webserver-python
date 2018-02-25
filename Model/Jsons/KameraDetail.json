@@ -1,0 +1,3 @@
+///URL + "/KameraDetail/" + id takto si pytat tento json
+
+[{"prihlasovacie_meno": null, "ip": null, "meno": "moja USB kamera", "typ": "USB", "descriptor": 0, "prihlasovacie_heslo": null}]

@@ -1,0 +1,49 @@
+//URL + "/browse" takto si pytat tento json
+
+[{
+	"snimky": [
+		{
+		"s_Vytvorena": "2018-02-19 23:03:32.993093", "s_poznamka": "ok", "s_id": 2, "s_nazov": "snimka0001.jpg"
+		},
+
+		{
+		"s_Vytvorena": "2018-02-19 23:03:32.993093", "s_poznamka": "zla", "s_id": 3, "s_nazov": "snimka0002.jpg"
+		},
+
+		{
+		"s_Vytvorena": "2018-02-19 23:03:32.993093", "s_poznamka": "ok", "s_id": 4, "s_nazov": "snimka00023.jpg"
+		}
+	]
+},
+{
+	"cams": [
+	{
+		"k_id": 1, "k_typ": "IP", "k_nazov": "moja prva kamera"
+	},
+	{
+		"k_id": 2, "k_typ": "USB", "k_nazov": "moja USB kamera"
+	},
+	{
+		"k_id": 3, "k_typ": "USB", "k_nazov": "moja druha USB kamera"
+	},
+	{
+		"k_id": 4, "k_typ": "IP", "k_nazov": "moja druha IP kamera"
+	},
+	{
+		"k_id": 5, "k_typ": "IP", "k_nazov": "moja tretia IP kamera"
+	}
+	]
+},
+{
+	"vies": [
+	{
+		"n_nazov": "moje prve nastavenie", "n_kamera_meno": "moja druha USB kamera", "n_id": 3
+	},
+	{
+		"n_nazov": "moje druhe nastaven", "n_kamera_meno": "moja druha IP kamera", "n_id": 4
+	},
+	{
+		"n_nazov": "moj motion", "n_kamera_meno": "moja tretia IP kamera", "n_id": 5
+	}
+	]
+}]

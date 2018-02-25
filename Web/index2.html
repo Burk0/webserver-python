@@ -94,6 +94,8 @@
                             <th>Názov</th>
                             <th>Poznámka</th>
                             <th>Vytvorena</th>
+                            <th>Kamera</th>
+                            <th>Nastavenie</th>
                         </tr>
                         </thead>
                         <tbody id="tableShotsContent">
@@ -208,6 +210,7 @@
                                 <label for="cameraName">Nazov kamery:</label>
                                 <input type="text" class="form-control" id="cameraName" name="cameraName">
                             </div>
+                            <label for="cam">Typ kamery:</label>
                             <select id="cam" title="Typ kamery" class="form-control">
                                 <option value="USB">USB Kamera</option>
                                 <option value="IP">IP Kamera</option>
@@ -220,7 +223,7 @@
 
                             <div id="ip">
                                 <div class="form-group">
-                                    <label for="acc_name">Kamery:</label>
+                                    <label for="acc_name">Prihlasovacie meno:</label>
                                     <input type="text" class="form-control" name="acc_name" id="acc_name"/>
                                 </div>
                                 <div class="form-group">
@@ -541,16 +544,19 @@
                         // ak je odpoved pole
                         if (Array.isArray(data)) {
 
+
+
                             let result = "";
                             // prejdeme celym polom
                             data.forEach((item) => {
+
                                 // pridame riadok
                                 result += `
                                 <tr>
-                                    <td>${item.s_id}</td>
-                                    <td>${item.s_nazov}</td>
-                                    <td>${item.s_Vytvorena}</td>
-                                    <td>${item.s_poznamka}</td>
+                                    <td>${item.id}</td>
+                                    <td>${item.nazov}</td>
+                                    <td>${item.Vytvorena}</td>
+                                    <td>${item.poznamka}</td>
                                     <td class="buttons">
                                         <button type="button" class="btn btn-default btn-sm">
                                             <span class="glyphicon glyphicon-remove"></span>
@@ -658,7 +664,7 @@
                     });
 
                     function onChangeCameraType() {
-                        const value = camElement.options[camElement.selectedIndex].value === "IP";
+                        const value = camElement.options[camElement.selectedIndex].value === "USB";
                         ipElement.classList.toggle("hidden", value);
                         usbElement.classList.toggle("hidden", !value);
                     }

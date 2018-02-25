@@ -1,0 +1,12 @@
+// URL + "/ViewDetail/" + id takto si pytat tento json
+
+[{
+	"cas_do": null,
+	"greyscale": true,
+	"interval_medzi_fotkami": 70,
+	"interval_mazania_fotky": 2000,
+	"cas_od": null,
+	"meno": "moje prve nastavenie",
+	"prz_motion_detektor": false,
+	"nova_fotka_pri_chybe": 5
+}]

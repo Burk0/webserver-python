@@ -1,0 +1,15 @@
+//data pre formular pri pridavani noveho nastavenia
+// URL + /listKamier
+
+[
+	{"meno": "moja prva kamera",
+	"id": 1},
+	{"meno": "moja USB kamera",
+	"id": 2},
+	{"meno": "moja druha USB kamera",
+	"id": 3},
+	{"meno": "moja druha IP kamera",
+	"id": 4},
+	{"meno": "moja tretia IP kamera",
+	"id": 5}
+]
