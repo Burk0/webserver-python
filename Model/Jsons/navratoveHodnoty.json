@@ -1,6 +1,6 @@
 // toto vratim ak formular prejde
 
-[{"return": 0}]
+[{"return": true}]
 
 // ak take meno kamery, alebo nastavenia mam v db tak vratim toto a treba vypisat chybu pri inpute na meno
-[{"return": 1}]
+[{"return": false}]
