@@ -99,24 +99,6 @@
                         </tr>
                         </thead>
                         <tbody id="tableShotsContent">
-                        <tr>
-                            <td>12.11.1993</td>
-                            <td>800x600</td>
-                            <td>UTC-2000</td>
-                            <td>
-                                <button type="button"
-                                        class="btn btn-default btn-sm"
-                                        data-toggle="modal"
-                                        data-target="#previewModal">
-                                    <span class="glyphicon glyphicon-eye-open"></span>
-                                </button>
-                                <button type="button"
-                                        class="btn btn-default btn-sm"
-                                        onclick="remove.shot(1)">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </button>
-                            </td>
-                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -126,7 +108,6 @@
                         <tr>
                             <th>Názov</th>
                             <th>Typ</th>
-                            <th>Kamera</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -337,7 +318,7 @@
                                        name="prz_rezim"
                                        value="prz_rezim">
 
-                                <input type="number"
+                                <input type="text"
                                        class="form-control"
                                        title="Režim"
                                        id="rezim"
@@ -365,13 +346,20 @@
 
         <script type="text/javascript">
             const URL = "http://127.0.0.1:8081";
+            const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons";
+            const POSTFIX_INIT = "initData.json";
+            const POSTFIX_CAMERA = "KameraDetail.json";
+            const POSTFIX_SHOT = "SnimkaDetail.json";
+            const POSTFIX_VIEW = "VIewDetail.json";
 
             const elements = {
                 searchInput: document.getElementById("search"),
                 camerasBody: document.getElementById("tableCamerasContent"),
                 camerasCount: document.getElementById("camerasCount"),
                 optionsBody: document.getElementById("tableOptionsContent"),
-                optionsCount: document.getElementById("optionsCount")
+                optionsCount: document.getElementById("optionsCount"),
+                shotsBody: document.getElementById("tableShotsContent"),
+                shotsCount: document.getElementById("shotsCount")
             };
 
             const data = {
@@ -422,7 +410,9 @@
                     set.options();
                 },
                 shot(index) {
-                    $("#tableShotsContent").find("tr:nth-child(" + index + ")").remove();
+                    data.shots.splice(index, 1);
+                    set.shots();
+                    // $("#tableShotsContent").find("tr:nth-child(" + index + ")").remove();
                 }
             };
 
@@ -462,17 +452,21 @@
                     }
                     // zobrazuje sa detail
                     else {
-                        utils.setAndDisable(inputCamera, camera.type, disabled);
-                        utils.setAndDisable(inputPassword, camera.password, disabled);
-                        utils.setAndDisable(inputIpAddress, camera.address, disabled);
-                        utils.setAndDisable(inputCameraType, camera.type, disabled);
-                        utils.setAndDisable(inputCameraName, camera.name, disabled);
+                        $.getJSON(API_URL + "/" + POSTFIX_CAMERA, (cameraDetail) =>{
+                            cameraDetail = cameraDetail[0];
+                            utils.setAndDisable(inputCamera, cameraDetail.prihlasovacie_meno, disabled);
+                            utils.setAndDisable(inputPassword, cameraDetail.prihlasovacie_heslo, disabled);
+                            utils.setAndDisable(inputIpAddress, cameraDetail.ip, disabled);
+                            utils.setAndDisable(inputCameraType, cameraDetail.typ, disabled);
+                            utils.setAndDisable(inputCameraName, cameraDetail.meno, disabled);
+                        });
                     }
                 },
                 optionDetail(optionId = "new", disabled) {
                     const buttonEdit = document.getElementById("optionDetailEdit");
                     const buttonSubmit = document.getElementById("optionDetailSubmit");
 
+                    const inputOptionCamera = document.getElementById("selectedCameraToOption");
                     const inputOptionName = document.getElementById("optionName");
                     const inputOptionMotionDetect = document.getElementById("prz_motionDetect");
                     const inputOptionMotionDetectDelay = document.getElementById("intervalmezdiFotkami");
@@ -492,6 +486,7 @@
 
                     // vytvára sa nová kamera
                     if (optionId === "new") {
+                        utils.setAndDisable(inputOptionCamera, "", disabled);
                         utils.setAndDisable(inputOptionName, "", disabled);
                         utils.setAndDisable(inputOptionMotionDetect, "", disabled);
                         utils.setAndDisable(inputOptionMotionDetectDelay, "", disabled);
@@ -504,6 +499,7 @@
                     }
                     // iba sa mení disablovanie inputov
                     else if (typeof optionId === "object"){
+                        utils.setAndDisable(inputOptionCamera, inputOptionCamera.value, disabled);
                         utils.setAndDisable(inputOptionName, inputOptionName.value, disabled);
                         utils.setAndDisable(inputOptionMotionDetect, inputOptionMotionDetect.checked, disabled);
                         utils.setAndDisable(inputOptionMotionDetectDelay, inputOptionMotionDetectDelay.value, disabled);
@@ -516,15 +512,19 @@
                     }
                     // zobrazuje sa detail
                     else {
-                        utils.setAndDisable(inputOptionName, Option.name, disabled);
-                        utils.setAndDisable(inputOptionMotionDetect, Option.motionDetect, disabled);
-                        utils.setAndDisable(inputOptionMotionDetectDelay, Option.motionDetectDelay, disabled);
-                        utils.setAndDisable(inputPhotoOnMove, Option.photoOnMove, disabled);
-                        utils.setAndDisable(inputPhotoOnMoveValue, Option.photoOnMoveValue, disabled);
-                        utils.setAndDisable(inputDeletePhoto, Option.deletePhoto, disabled);
-                        utils.setAndDisable(inputDeletePhotoValue, Option.deletePhotoValue, disabled);
-                        utils.setAndDisable(inputActiveTime, Option.activeTime, disabled);
-                        utils.setAndDisable(inputActiveTimeValue, Option.activeTimeValue, disabled);
+                        $.getJSON(API_URL + "/" + POSTFIX_VIEW, (Option) => {
+                            Option = Option[0];
+                            utils.setAndDisable(inputOptionCamera, Option.id_kamera, disabled);
+                            utils.setAndDisable(inputOptionName, Option.meno, disabled);
+                            utils.setAndDisable(inputOptionMotionDetect, !!Option.interval_medzi_fotkami, disabled);
+                            utils.setAndDisable(inputOptionMotionDetectDelay, Option.interval_medzi_fotkami, disabled);
+                            utils.setAndDisable(inputPhotoOnMove, !!Option.nova_fotka_pri_chybe, disabled);
+                            utils.setAndDisable(inputPhotoOnMoveValue, Option.nova_fotka_pri_chybe, disabled);
+                            utils.setAndDisable(inputDeletePhoto, !!Option.interval_mazania_fotky, disabled);
+                            utils.setAndDisable(inputDeletePhotoValue, Option.interval_mazania_fotky, disabled);
+                            utils.setAndDisable(inputActiveTime, Option.cas_od || Option.cas_do, disabled);
+                            utils.setAndDisable(inputActiveTimeValue, [Option.cas_od, Option.cas_do].join(" - "), disabled);
+                        });
                     }
                 },
                 detail(item) {
@@ -588,62 +588,39 @@
                         // alert("vyhladávam slovo: " + event.target.value);
                         set.cameras();
                         set.options();
+                        set.shots();
                         // }
                     };
 
-                    // posleme HTTP request pre kamier
-                    (function (){
-                        const resultCameras = [{
-                            name: "Moja najlepšia a zároveň jediná kamera",
-                            type: "IP",
-                            password: "tajneHeslo222",
-                            address: "127.0.0.1",
-                            camera: "UTC-2000",
-                        },{
-                            name: "Moja druhá najlepšia a zároveň jediná kamera",
-                            type: "IP",
-                            password: "superTajneHeslo111",
-                            address: "127.0.0.2",
-                            camera: "UTC-1000",
-                        }];
 
+                    $.getJSON(API_URL + "/" + POSTFIX_INIT, (response) => {
                         while(data.cameras.length){
                             data.cameras.splice(0, 1);
                         }
-                        data.cameras.push.apply(data.cameras, resultCameras);
+                        data.cameras.push.apply(data.cameras, response.cams);
                         set.cameras();
-                    })();
-
-                    // posleme HTTP request pre nastavení
-                    (function (){
-                        const resultOptions = [{
-                            name: "Tajné nastavenie",
-                            cameraName: "Moja najlepšia a zároveň jediná kamera",
-                            motionDetect: true,
-                            motionDetectDelay: 60,
-                            photoOnMove: true,
-                            photoOnMoveValue: 123,
-                            deletePhoto: true,
-                            deletePhotoValue: 321,
-                            activeTime: true,
-                            activeTimeValue: 1111,
-                        },{
-                            name: "Mega super nastavenie",
-                            cameraName: "Moja najlepšia a zároveň jediná kamera",
-                            motionDetect: true,
-                            motionDetectDelay: 60,
-                            photoOnMove: false,
-                            deletePhoto: true,
-                            deletePhotoValue: 321,
-                            activeTime: false,
-                        }];
 
                         while(data.options.length){
                             data.options.splice(0, 1);
                         }
-                        data.options.push.apply(data.options, resultOptions);
+                        data.options.push.apply(data.options, response.vies);
                         set.options();
-                    })();
+
+
+                        while(data.shots.length){
+                            data.shots.splice(0, 1);
+                        }
+                        data.shots.push.apply(data.shots, response.snimky);
+                        set.shots();
+
+                        const html = "<option></option>" + data.cameras.map((camera) => {
+                            return `<option value="${camera.k_id}">${camera.k_nazov}</option>`;
+                        }).join("");
+                        $('.js-example-basic-single').html(html).select2({
+                            placeholder: 'Kamera pre ktorú sú určené nastavenia',
+                            allowClear: true
+                        });
+                    })
                 },
                 view() {
                     $("#addViewSubmit").click(function () {
@@ -681,17 +658,15 @@
                     let count = 0;
                     data.cameras.forEach((camera, index) => {
                         if (searchKey &&
-                            camera.name.toLowerCase().indexOf(searchKey) < 0 &&
-                            camera.type.toLowerCase().indexOf(searchKey) < 0 &&
-                            camera.camera.toLowerCase().indexOf(searchKey) < 0 ) {
+                            camera.k_nazov.toLowerCase().indexOf(searchKey) < 0 &&
+                            camera.k_typ.toLowerCase().indexOf(searchKey) < 0) {
                             return;
                         }
                         count++;
                         innerHtml += `
                         <tr>
-                            <td>${camera.name}</td>
-                            <td>${camera.type}</td>
-                            <td>${camera.camera}</td>
+                            <td>${camera.k_nazov}</td>
+                            <td>${camera.k_typ}</td>
                             <td>
                                 <button type="button"
                                         class="btn btn-default btn-sm"
@@ -726,15 +701,15 @@
                     let count = 0;
                     data.options.forEach((option, index) => {
                         if (searchKey &&
-                            option.name.toLowerCase().indexOf(searchKey) < 0 &&
-                            option.cameraName.toLowerCase().indexOf(searchKey) < 0 ) {
+                            option.n_nazov.toLowerCase().indexOf(searchKey) < 0 &&
+                            option.n_kamera_meno.toLowerCase().indexOf(searchKey) < 0 ) {
                             return;
                         }
                         count++;
                         innerHtml += `
                         <tr>
-                            <td>${option.name}</td>
-                            <td>${option.cameraName}</td>
+                            <td>${option.n_nazov}</td>
+                            <td>${option.n_kamera_meno}</td>
                             <td>
                                 <button type="button"
                                         class="btn btn-default btn-sm"
@@ -763,23 +738,57 @@
                     });
                     elements.optionsCount.innerText = count;
                     elements.optionsBody.innerHTML = innerHtml;
+                },
+                shots() {
+                    const searchKey = elements.searchInput.value.toLowerCase();
+                    elements.shotsCount.innerText = data.options.length;
+                    let innerHtml = "";
+                    let count = 0;
+                    data.shots.forEach((shot, index) => {
+                        if (searchKey &&
+                            shot.s_nazov.toLowerCase().indexOf(searchKey) < 0 &&
+                            shot.s_poznamka.toLowerCase().indexOf(searchKey) < 0 &&
+                            shot.nastavenie.toLowerCase().indexOf(searchKey) < 0 &&
+                            shot.kamera.toLowerCase().indexOf(searchKey) < 0 ) {
+                            return;
+                        }
+                        count++;
+                        innerHtml += `
+                        <tr>
+                            <td>${shot.s_id}</td>
+                            <td>${shot.s_nazov}</td>
+                            <td>${shot.s_poznamka}</td>
+                            <td>${shot.s_Vytvorena}</td>
+                            <td>${shot.kamera}</td>
+                            <td>${shot.nastavenie}</td>
+                            <td>
+                                <button type="button"
+                                        class="btn btn-default btn-sm"
+                                        onclick="remove.shot(${index})">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </td>
+
+
+                        </tr>
+                    `
+                    });
+                    elements.shotsCount.innerText = count;
+                    elements.shotsBody.innerHTML = innerHtml;
                 }
             };
 
             // ak sa načíta dokument tak za zavolajú všetky inicializačné metódy
             $(function () {
                 elements.searchInput.value = utils.getParameterByName("search");
+
+                $.getJSON(API_URL + "/initData.json", (data) => {
+                    console.log("data: ", data);
+                }, "json");
+
                 init.main();
                 init.view();
                 init.camera();
-
-                const html = "<option></option>" + data.cameras.map((camera) => {
-                    return `<option value="${camera.name}">${camera.name}</option>`;
-                }).join("");
-                $('.js-example-basic-single').html(html).select2({
-                    placeholder: 'Kamera pre ktorú sú určené nastavenia',
-                    allowClear: true
-                });
             });
 
         </script>
