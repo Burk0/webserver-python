@@ -1,3 +1,3 @@
 //URL + "/SnimkaDetail/" + id takto si pytat tento json
 
-{"cesta": "cesta", "meno": "snimka0001.jpg", "rozlisenie": "1960x800"}]
+{"cesta": "cesta", "meno": "snimka0001.jpg", "rozlisenie": "1960x800", "url":"localhost:8080/kamera1/view1/snimka0001.jpg"}]
