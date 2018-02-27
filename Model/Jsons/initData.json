@@ -4,19 +4,25 @@
          "s_Vytvorena":"2018-02-19 23:03:32.993093",
          "s_poznamka":"ok",
          "s_id":2,
-         "s_nazov":"snimka0001.jpg"
+         "s_nazov":"snimka0001.jpg",
+         "kamera":"nejaka kamera",
+         "nastavenie":"nejake nastavenie"
       },
       {
          "s_Vytvorena":"2018-02-19 23:03:32.993093",
          "s_poznamka":"zla",
          "s_id":3,
-         "s_nazov":"snimka0002.jpg"
+         "s_nazov":"snimka0002.jpg",
+         "kamera":"nejaka kamera",
+         "nastavenie":"nejake nastavenie"
       },
       {
          "s_Vytvorena":"2018-02-19 23:03:32.993093",
          "s_poznamka":"ok",
          "s_id":4,
-         "s_nazov":"snimka00023.jpg"
+         "s_nazov":"snimka00023.jpg",
+         "kamera":"nejaka kamera",
+         "nastavenie":"nejake nastavenie"
       }
    ],
    "cams":[
