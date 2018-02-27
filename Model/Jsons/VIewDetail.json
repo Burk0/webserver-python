@@ -6,5 +6,6 @@
 	"cas_od": null,
 	"meno": "moje prve nastavenie",
 	"prz_motion_detektor": false,
-	"nova_fotka_pri_chybe": 5
+	"nova_fotka_pri_chybe": 5,
+	"id_kamera" : 22
 }]
