@@ -136,7 +136,7 @@
                     </table>
                     <button type="button"
                             class="btn btn-primary"
-                            onclick="show.optionDetail('new')"
+                            onclick="show.viewDetail('new')"
                             data-toggle="modal"
                             data-target="#detailViewForm">
                         Nové nastavenie
@@ -329,9 +329,9 @@
                             <input type="button"
                                    value="Upraviť"
                                    class="btn btn-primary hidden"
-                                   onclick="show.optionDetail(null, false)"
-                                   id="optionDetailEdit"/>
-                            <input type="button" value="Uložiť" class="btn btn-primary hidden" id="optionDetailSubmit"/>
+                                   onclick="show.viewDetail(null, false)"
+                                   id="viewDetailEdit"/>
+                            <input type="button" value="Uložiť" class="btn btn-primary hidden" id="viewDetailSubmit"/>
                         </form>
                     </div>
 
@@ -345,6 +345,78 @@
         </div>
 
         <script type="text/javascript">
+            class Camera {
+                constructor(id, name, login, password, ip, type, descriptor){
+                    this.login = login;
+                    this.id = id;
+                    this.password = password;
+                    this.ip = ip;
+                    this.name = name;
+                    this.type = type;
+                    this.descriptor = descriptor;
+                }
+                static parse(camera) {
+                    return new Camera(
+                        camera.id || camera.k_id,
+                        camera.meno || camera.k_nazov,
+                        camera.prihlasovacie_meno,
+                        camera.prihlasovacie_heslo,
+                        camera.ip,
+                        camera.typ || camera.k_typ,
+                        camera.descriptor
+                    );
+                }
+            }
+            class View {
+                constructor(id, name, greyscale, photoInterval, deleteInterval, timeFrom, timeTo, camera, motionDetection, photoIntervalWithError) {
+                    this.greyscale = greyscale;
+                    this.timeTo = timeTo;
+                    this.id = id;
+                    this.photoInterval = photoInterval;
+                    this.deleteInterval = deleteInterval;
+                    this.timeFrom = timeFrom;
+                    this.camera = camera;
+                    this.motionDetection = motionDetection;
+                    this.photoIntervalWithError = photoIntervalWithError;
+                    this.name = name;
+                }
+
+                static parse(view) {
+                    return new View(
+                        view.id || view.n_id,
+                        view.meno || view.n_nazov,
+                        view.greyscale,
+                        view.interval_medzi_fotkami,
+                        view.interval_mazania_fotky,
+                        view.cas_od,
+                        view.cas_do,
+                        new Camera(view.id_kamera, view.n_kamera_meno || "unknown camera name"),
+                        view.prz_motion_detektor,
+                        view.nova_fotka_pri_chybe,
+                    )
+                }
+            }
+            class Shot {
+                constructor(created, note, id, name, camera, view) {
+                    this.created = created;
+                    this.note = note;
+                    this.id = id;
+                    this.name = name;
+                    this.camera = camera;
+                    this.view = view;
+                }
+                static parse(shot) {
+                    return new Shot(
+                        shot.s_Vytvorena,
+                        shot.s_poznamka,
+                        shot.s_id,
+                        shot.s_nazov,
+                        new Camera(1, shot.kamera || "unknown camera name"),
+                        new View(1, shot.nastavenie || "unknown view name")
+                    )
+                }
+            }
+
             const URL = "http://127.0.0.1:8081";
             const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons";
             const POSTFIX_INIT = "initData.json";
@@ -364,7 +436,7 @@
 
             const data = {
                 cameras: [],
-                options: [],
+                views: [],
                 shots: []
             };
 
@@ -406,7 +478,7 @@
                     set.cameras();
                 },
                 option(index) {
-                    data.options.splice(index, 1);
+                    data.views.splice(index, 1);
                     set.options();
                 },
                 shot(index) {
@@ -453,18 +525,18 @@
                     // zobrazuje sa detail
                     else {
                         $.getJSON(API_URL + "/" + POSTFIX_CAMERA, (cameraDetail) =>{
-                            cameraDetail = cameraDetail[0];
-                            utils.setAndDisable(inputCamera, cameraDetail.prihlasovacie_meno, disabled);
-                            utils.setAndDisable(inputPassword, cameraDetail.prihlasovacie_heslo, disabled);
+                            cameraDetail = Camera.parse(cameraDetail[0]);
+                            utils.setAndDisable(inputCamera, cameraDetail.login, disabled);
+                            utils.setAndDisable(inputPassword, cameraDetail.password, disabled);
                             utils.setAndDisable(inputIpAddress, cameraDetail.ip, disabled);
-                            utils.setAndDisable(inputCameraType, cameraDetail.typ, disabled);
-                            utils.setAndDisable(inputCameraName, cameraDetail.meno, disabled);
+                            utils.setAndDisable(inputCameraType, cameraDetail.type, disabled);
+                            utils.setAndDisable(inputCameraName, cameraDetail.name, disabled);
                         });
                     }
                 },
-                optionDetail(optionId = "new", disabled) {
-                    const buttonEdit = document.getElementById("optionDetailEdit");
-                    const buttonSubmit = document.getElementById("optionDetailSubmit");
+                viewDetail(optionId = "new", disabled) {
+                    const buttonEdit = document.getElementById("viewDetailEdit");
+                    const buttonSubmit = document.getElementById("viewDetailSubmit");
 
                     const inputOptionCamera = document.getElementById("selectedCameraToOption");
                     const inputOptionName = document.getElementById("optionName");
@@ -477,7 +549,7 @@
                     const inputActiveTime = document.getElementById("prz_rezim");
                     const inputActiveTimeValue = document.getElementById("rezim");
 
-                    const Option = data.options[optionId];
+                    const Option = data.views[optionId];
 
                     disabled = typeof disabled === "undefined" ? optionId !== "new" : disabled;
 
@@ -513,17 +585,17 @@
                     // zobrazuje sa detail
                     else {
                         $.getJSON(API_URL + "/" + POSTFIX_VIEW, (Option) => {
-                            Option = Option[0];
-                            utils.setAndDisable(inputOptionCamera, Option.id_kamera, disabled);
-                            utils.setAndDisable(inputOptionName, Option.meno, disabled);
-                            utils.setAndDisable(inputOptionMotionDetect, !!Option.interval_medzi_fotkami, disabled);
-                            utils.setAndDisable(inputOptionMotionDetectDelay, Option.interval_medzi_fotkami, disabled);
-                            utils.setAndDisable(inputPhotoOnMove, !!Option.nova_fotka_pri_chybe, disabled);
-                            utils.setAndDisable(inputPhotoOnMoveValue, Option.nova_fotka_pri_chybe, disabled);
-                            utils.setAndDisable(inputDeletePhoto, !!Option.interval_mazania_fotky, disabled);
-                            utils.setAndDisable(inputDeletePhotoValue, Option.interval_mazania_fotky, disabled);
-                            utils.setAndDisable(inputActiveTime, Option.cas_od || Option.cas_do, disabled);
-                            utils.setAndDisable(inputActiveTimeValue, [Option.cas_od, Option.cas_do].join(" - "), disabled);
+                            Option = View.parse(Option[0]);
+                            utils.setAndDisable(inputOptionCamera, Option.camera.id, disabled);
+                            utils.setAndDisable(inputOptionName, Option.name, disabled);
+                            utils.setAndDisable(inputOptionMotionDetect, !!Option.photoInterval, disabled);
+                            utils.setAndDisable(inputOptionMotionDetectDelay, Option.photoInterval, disabled);
+                            utils.setAndDisable(inputPhotoOnMove, !!Option.motionDetection, disabled);
+                            utils.setAndDisable(inputPhotoOnMoveValue, Option.motionDetection, disabled);
+                            utils.setAndDisable(inputDeletePhoto, !!Option.deleteInterval, disabled);
+                            utils.setAndDisable(inputDeletePhotoValue, Option.deleteInterval, disabled);
+                            utils.setAndDisable(inputActiveTime, Option.timeFrom || Option.timeTo, disabled);
+                            utils.setAndDisable(inputActiveTimeValue, [Option.timeFrom, Option.timeTo].join(" - "), disabled);
                         });
                     }
                 },
@@ -597,20 +669,20 @@
                         while(data.cameras.length){
                             data.cameras.splice(0, 1);
                         }
-                        data.cameras.push.apply(data.cameras, response.cams);
+                        data.cameras.push.apply(data.cameras, response.cams.map(Camera.parse));
                         set.cameras();
 
-                        while(data.options.length){
-                            data.options.splice(0, 1);
+                        while(data.views.length){
+                            data.views.splice(0, 1);
                         }
-                        data.options.push.apply(data.options, response.vies);
+                        data.views.push.apply(data.views, response.vies.map(View.parse));
                         set.options();
 
 
                         while(data.shots.length){
                             data.shots.splice(0, 1);
                         }
-                        data.shots.push.apply(data.shots, response.snimky);
+                        data.shots.push.apply(data.shots, response.snimky.map(Shot.parse));
                         set.shots();
 
                         const html = "<option></option>" + data.cameras.map((camera) => {
@@ -658,15 +730,15 @@
                     let count = 0;
                     data.cameras.forEach((camera, index) => {
                         if (searchKey &&
-                            camera.k_nazov.toLowerCase().indexOf(searchKey) < 0 &&
-                            camera.k_typ.toLowerCase().indexOf(searchKey) < 0) {
+                            camera.name.toLowerCase().indexOf(searchKey) < 0 &&
+                            camera.type.toLowerCase().indexOf(searchKey) < 0) {
                             return;
                         }
                         count++;
                         innerHtml += `
                         <tr>
-                            <td>${camera.k_nazov}</td>
-                            <td>${camera.k_typ}</td>
+                            <td>${camera.name}</td>
+                            <td>${camera.type}</td>
                             <td>
                                 <button type="button"
                                         class="btn btn-default btn-sm"
@@ -696,31 +768,31 @@
                 },
                 options() {
                     const searchKey = elements.searchInput.value.toLowerCase();
-                    elements.optionsCount.innerText = data.options.length;
+                    elements.optionsCount.innerText = data.views.length;
                     let innerHtml = "";
                     let count = 0;
-                    data.options.forEach((option, index) => {
+                    data.views.forEach((view, index) => {
                         if (searchKey &&
-                            option.n_nazov.toLowerCase().indexOf(searchKey) < 0 &&
-                            option.n_kamera_meno.toLowerCase().indexOf(searchKey) < 0 ) {
+                            view.name.toLowerCase().indexOf(searchKey) < 0 &&
+                            view.camera.name.toLowerCase().indexOf(searchKey) < 0 ) {
                             return;
                         }
                         count++;
                         innerHtml += `
                         <tr>
-                            <td>${option.n_nazov}</td>
-                            <td>${option.n_kamera_meno}</td>
+                            <td>${view.name}</td>
+                            <td>${view.camera.name}</td>
                             <td>
                                 <button type="button"
                                         class="btn btn-default btn-sm"
-                                        onclick="show.optionDetail(${index})"
+                                        onclick="show.viewDetail(${index})"
                                         data-toggle="modal"
                                         data-target="#detailViewForm">
                                     <span class="glyphicon glyphicon-info-sign"></span>
                                 </button>
                                 <button type="button"
                                         class="btn btn-default btn-sm"
-                                        onclick="show.optionDetail(${index}, false)"
+                                        onclick="show.viewDetail(${index}, false)"
                                         data-toggle="modal"
                                         data-target="#detailViewForm">
                                     <span class="glyphicon glyphicon-edit"></span>
@@ -741,26 +813,26 @@
                 },
                 shots() {
                     const searchKey = elements.searchInput.value.toLowerCase();
-                    elements.shotsCount.innerText = data.options.length;
+                    elements.shotsCount.innerText = data.views.length;
                     let innerHtml = "";
                     let count = 0;
                     data.shots.forEach((shot, index) => {
                         if (searchKey &&
-                            shot.s_nazov.toLowerCase().indexOf(searchKey) < 0 &&
-                            shot.s_poznamka.toLowerCase().indexOf(searchKey) < 0 &&
-                            shot.nastavenie.toLowerCase().indexOf(searchKey) < 0 &&
-                            shot.kamera.toLowerCase().indexOf(searchKey) < 0 ) {
+                            shot.name.toLowerCase().indexOf(searchKey) < 0 &&
+                            shot.note.toLowerCase().indexOf(searchKey) < 0 &&
+                            shot.view.name.toLowerCase().indexOf(searchKey) < 0 &&
+                            shot.camera.name.toLowerCase().indexOf(searchKey) < 0 ) {
                             return;
                         }
                         count++;
                         innerHtml += `
                         <tr>
-                            <td>${shot.s_id}</td>
-                            <td>${shot.s_nazov}</td>
-                            <td>${shot.s_poznamka}</td>
-                            <td>${shot.s_Vytvorena}</td>
-                            <td>${shot.kamera}</td>
-                            <td>${shot.nastavenie}</td>
+                            <td>${shot.id}</td>
+                            <td>${shot.name}</td>
+                            <td>${shot.note}</td>
+                            <td>${shot.created}</td>
+                            <td>${shot.camera.name}</td>
+                            <td>${shot.view.name}</td>
                             <td>
                                 <button type="button"
                                         class="btn btn-default btn-sm"
@@ -768,8 +840,6 @@
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </button>
                             </td>
-
-
                         </tr>
                     `
                     });
