@@ -3,38 +3,9 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from Database import database
-import Web
 
 
 class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
-    # Page = open('index.html')
-    # json_string = json.dumps(backend.getData())
-
-    # Page = '''\
-    # <html>
-    # <body>
-    # <table>
-    # <tr>  <td>Header</td>         <td>Value</td>          </tr>
-    # <tr>  <td>Date and time</td>  <td>{date_time}</td>    </tr>
-    # <tr>  <td>Client host</td>    <td>{client_host}</td>  </tr>
-    # <tr>  <td>Client port</td>    <td>{client_port}s</td> </tr>
-    # <tr>  <td>Command</td>        <td>{command}</td>      </tr>
-    # <tr>  <td>Path</td>           <td>{path}</td>         </tr>
-    # </table>
-    # </body>
-    # </html>
-    # '''
-    # def do_GET(self):
-    #     self.send_response(200)
-    #
-    #     self.send_header('Content-type','text/html')
-    #     self.end_headers()
-    #     self.wfile.write(bytes('{"status" : "ready"}',"utf8"))
-    #
-    #     message = "Hello world"
-    #     file = open('index.html')
-    #     self.wfile.write(bytes(file.read(),"utf8"))
-    #     file.close()
 
     def do_GET(self):
         print(self.path)
@@ -50,7 +21,7 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
             self.end_headers()
             # print(self.json_string)
             db = database.Database
-            self.wfile.write(bytes(db.getInitData(db), "utf8"))
+            self.wfile.write(bytes(db.initDataFile(db), "utf8"))
         # elif self.path.endswith("/cams"):
         # #     print("ina stranka")
         #     self.send_page('addCamForm.html')

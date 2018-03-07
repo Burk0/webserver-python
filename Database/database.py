@@ -13,6 +13,25 @@ connect_str = "dbname='Bc_new' user='postgres' host='localhost' " + \
 class Database(object):
 #listKamier je list kamier, ktory patri triede, z toho dovodu aby som nemusel robit dopyt do db kvoli zoznamu vsetkych kamier
 
+    def initDataFile(self):
+        data_imgs = []
+        data_cams = []
+        data_views = []
+        data_imgs.append(
+            {'id': '2', 'nazov': 'nazov', 'poznamka':'pozn', 'Vytvorena': '12:03:2012',
+             'kamera': 'kamera1', 'nastavenie': 'nastavenie'})
+
+        data_cams.append({'k_id': '3', 'k_nazov': 'kamera_nazov', 'k_typ': 'USB'})
+
+        data_views.append({'n_id': '4', 'n_nazov': 'nazov',
+                               'n_kamera_meno': 'kamera1'})
+
+        oData = JsonData.JsonData(data_cams, data_views, data_imgs)
+        print(json.dumps(oData.__dict__, default=self.myconverter))
+        return json.dumps(oData.__dict__, default=self.myconverter)
+
+
+
 
     def getInitData(self):
 
