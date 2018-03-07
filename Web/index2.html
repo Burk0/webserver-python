@@ -407,10 +407,10 @@
                 }
                 static parse(shot) {
                     return new Shot(
-                        shot.s_Vytvorena,
-                        shot.s_poznamka,
-                        shot.s_id,
-                        shot.s_nazov,
+                        shot.Vytvorena,
+                        shot.poznamka,
+                        shot.id,
+                        shot.nazov,
                         new Camera(1, shot.kamera || "unknown camera name"),
                         new View(1, shot.nastavenie || "unknown view name")
                     )
@@ -418,7 +418,7 @@
             }
 
             const URL = "http://127.0.0.1:8081";
-            const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons";
+            <!--const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons";-->
             const POSTFIX_INIT = "initData.json";
             const POSTFIX_CAMERA = "KameraDetail.json";
             const POSTFIX_SHOT = "SnimkaDetail.json";
@@ -524,7 +524,7 @@
                     }
                     // zobrazuje sa detail
                     else {
-                        $.getJSON(API_URL + "/" + POSTFIX_CAMERA, (cameraDetail) =>{
+                        $.getJSON(URL + "/" + POSTFIX_CAMERA, (cameraDetail) =>{
                             cameraDetail = Camera.parse(cameraDetail[0]);
                             utils.setAndDisable(inputCamera, cameraDetail.login, disabled);
                             utils.setAndDisable(inputPassword, cameraDetail.password, disabled);
@@ -584,7 +584,7 @@
                     }
                     // zobrazuje sa detail
                     else {
-                        $.getJSON(API_URL + "/" + POSTFIX_VIEW, (Option) => {
+                        $.getJSON(URL + "/" + POSTFIX_VIEW, (Option) => {
                             Option = View.parse(Option[0]);
                             utils.setAndDisable(inputOptionCamera, Option.camera.id, disabled);
                             utils.setAndDisable(inputOptionName, Option.name, disabled);
@@ -616,7 +616,7 @@
                         // ak je odpoved pole
                         if (Array.isArray(data)) {
 
-
+                            console.log(data)
 
                             let result = "";
                             // prejdeme celym polom
@@ -665,7 +665,7 @@
                     };
 
 
-                    $.getJSON(API_URL + "/" + POSTFIX_INIT, (response) => {
+                    $.getJSON(URL + "/" + POSTFIX_INIT, (response) => {
                         while(data.cameras.length){
                             data.cameras.splice(0, 1);
                         }
@@ -852,7 +852,7 @@
             $(function () {
                 elements.searchInput.value = utils.getParameterByName("search");
 
-                $.getJSON(API_URL + "/initData.json", (data) => {
+                $.getJSON(URL + "/initData.json", (data) => {
                     console.log("data: ", data);
                 }, "json");
 

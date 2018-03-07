@@ -37,9 +37,20 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
     #     file.close()
 
     def do_GET(self):
+        print(self.path)
         # page = self.create_page()
         # if self.path.endswith("/browse"):
-        self.send_page('Web/index2.html')
+        if "/" in self.path:
+            self.send_page('Web/index2.html')
+
+        if self.path.endswith("/initData.json"):
+            print("tu som"  + self.path)
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            # print(self.json_string)
+            db = database.Database
+            self.wfile.write(bytes(db.getInitData(db), "utf8"))
         # elif self.path.endswith("/cams"):
         # #     print("ina stranka")
         #     self.send_page('addCamForm.html')
@@ -61,36 +72,37 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
     def do_POST(self):
         print(self.path)
-        if self.path.endswith("/browse"):
-            print(self.path)
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            # print(self.json_string)
-            db = database.Database;
-            self.wfile.write(bytes(db.getInitData(db), "utf8"))
-            # database.getImageDetail(2)
-            print(db.getAllCams(db))
+        # if self.path.endswith("/browse"):
+        #     print(self.path)
         #     self.send_response(200)
-        elif "/detail/" in self.path:
-            print("tu som " + self.path[8:])
-            self.wfile.write(bytes(database.getDetail(9), "utf8"))
-
-        elif "/addCam" in self.path:
-            print(self.path)
-            # content_length = int(self.headers['Content-Length'])
-            # print(self.rfile.read(content_length))
-            # form = cgi.FieldStorage()
-            #
-            # username = form.getvalue("username")
-            #
-            # print(username)
-
-        elif "/addView" in self.path:
-            print(self.path)
-
-        else:
-            print(self.path)
+        #     self.send_header('Content-Type', 'application/json')
+        #     self.end_headers()
+        #     # print(self.json_string)
+        #     db = database.Database;
+        #     self.wfile.write(bytes(db.getInitData(db), "utf8"))
+        #     # database.getImageDetail(2)
+        #     # print(db.getInitData(db))
+        #     # print(db.getAllCams(db))
+        # #     self.send_response(200)
+        # elif "/detail/" in self.path:
+        #     print("tu som " + self.path[8:])
+        #     self.wfile.write(bytes(database.getDetail(9), "utf8"))
+        #
+        # elif "/addCam" in self.path:
+        #     print(self.path)
+        #     # content_length = int(self.headers['Content-Length'])
+        #     # print(self.rfile.read(content_length))
+        #     # form = cgi.FieldStorage()
+        #     #
+        #     # username = form.getvalue("username")
+        #     #
+        #     # print(username)
+        #
+        # elif "/addView" in self.path:
+        #     print(self.path)
+        #
+        # else:
+        #     print(self.path)
 
             # self.wfile.write(bytes("posielam novy json","utf8"))
     #     self.wfile.write(bytes("<html><body><h1>POST Request Received!</h1></body></html>","utf8"))

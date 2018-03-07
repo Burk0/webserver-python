@@ -4,7 +4,7 @@ import datetime
 import json
 
 import psycopg2
-from Model import view,snimka,kamera
+from Model import view, snimka, kamera, JsonData, JsonModel
 
 connect_str = "dbname='Bc_new' user='postgres' host='localhost' " + \
               "password='admin1234'"
@@ -70,15 +70,19 @@ class Database(object):
         for i in range(len(listNastaveni)):
             data_views.append({'n_id': listNastaveni[i].id, 'n_nazov': listNastaveni[i].nazov, 'n_kamera_meno': listNastaveni[i].kamera_meno})
 
+        # data.__add__({'snimky':data_imgs})
+        # data.append({'snimky':data_imgs})
+        # data.append({'cams': data_cams})
+        # data.append({'views':data_views})
 
-        data.append({'snimky':data_imgs})
-        data.append({'cams': data_cams})
-        data.append({'views':data_views})
+        oData = JsonData.JsonData(data_cams,data_views,data_imgs)
 
 
-        # print(json.dumps(data, default=myconverter))
 
-        return json.dumps(data,default=self.myconverter)
+        # print(json.dumps(oData.__dict__, default=self.myconverter))
+        # sdata = str(data)
+        # print(sdata)
+        return json.dumps(oData.__dict__,default=self.myconverter)
 
 
     #Ziskanie detailu snimky z kamery
@@ -101,8 +105,9 @@ class Database(object):
 
         if(row is not None):
             data.append({'meno': row[0], 'rozlisenie': row[1], 'cesta': row[2]})
+            odata = JsonModel.JsonModel(data)
             # print(json.dumps(data))
-            return json.dumps(data)
+            return json.dumps(odata.__dict__)
         else:
             return None
 
@@ -125,8 +130,9 @@ class Database(object):
         if (row is not None):
             data.append({'meno': row[0],'typ': row[1], 'prihlasovacie_meno':row[2],'prihlasovacie_heslo':row[3],'ip':row[4],'descriptor':row[5]})
 
-        # print(json.dumps(data))
-            return json.dumps(data)
+            odata = JsonModel.JsonModel(data)
+            # print(json.dumps(data))
+            return json.dumps(odata.__dict__)
         else:
             return None
 
@@ -151,20 +157,28 @@ class Database(object):
                          'interval_mazania_fotky':row[6],'prz_motion_detektor':row[7],'cas_od':row[9],
                          'cas_do':row[10],'greyscale':row[11]})
 
-            print(json.dumps(data, default=self.myconverter))
-            return json.dumps(data, default=self.myconverter)
+            # print(json.dumps(data, default=self.myconverter))
+            odata = JsonModel.JsonModel(data)
+            # print(json.dumps(data))
+            return json.dumps(odata.__dict__, default=self.myconverter)
         else:
             return None
 
     #metoda ktora mi vrati vsetky kamery v systeme
-    def getAllCams(self):
+    def getIfNameExists(self):
         data = []
         data.append({'return' : 0})
-        return json.dumps(data)
-        # for i in range(len(self.listKamier)):
-        #     data.append({'id':self.listKamier[i].id,'meno':self.listKamier[i].nazov})
-        # return json.dumps(data)
+        odata = JsonModel.JsonModel(data)
+        # print(json.dumps(data))
+        return json.dumps(odata.__dict__, default=self.myconverter)
 
+
+    def getAllCams(self):
+        data=[]
+        for i in range(len(self.listKamier)):
+            data.append({'id':self.listKamier[i].id,'meno':self.listKamier[i].nazov})
+        odata = JsonModel.JsonModel(data)
+        return json.dumps(odata.__dict__, default=self.myconverter)
 
 
     #Converter casu
