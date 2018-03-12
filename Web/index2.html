@@ -186,7 +186,7 @@
 
                     <!-- Modal body -->
                     <div class="modal-body">
-                        <form action="#">
+                        <form action="#" id="cameraDetailForm">
                             <div class="form-group">
                                 <label for="cameraName">Nazov kamery:</label>
                                 <input type="text" class="form-control" id="cameraName" name="cameraName">
@@ -217,18 +217,19 @@
                                 </div>
                                 <!--<input type="button" value="Test" />-->
                             </div>
+                            <input type="hidden" name="actualId" id="actualCameraId">
                             <input type="button"
                                    value="Upraviť"
                                    class="btn btn-primary hidden"
                                    onclick="show.cameraDetail(null, false)"
                                    id="cameraDetailEdit"/>
-                            <input type="button" value="Uložiť" class="btn btn-primary hidden" id="cameraDetailSubmit"/>
+                            <input type="button" value="Uložiť" onclick="()" class="btn btn-primary hidden" id="cameraDetailSubmit"/>
                         </form>
                     </div>
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button type="button" id="closeCameraDetailButton" class="btn btn-danger" data-dismiss="modal">Close</button>
                     </div>
 
                 </div>
@@ -417,8 +418,8 @@
                 }
             }
 
-            const URL = "http://127.0.0.1:8081";
-            <!--const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons";-->
+            //const API_URL = "http://127.0.0.1:8081";
+            const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons";
             const POSTFIX_INIT = "initData.json";
             const POSTFIX_CAMERA = "KameraDetail.json";
             const POSTFIX_SHOT = "SnimkaDetail.json";
@@ -472,6 +473,28 @@
                 }
             };
 
+            const handlers = {
+                cameraSave() {
+                    const inputActualCameraId = document.getElementById("actualCameraId");
+                    const cameraData = $("#cameraDetailForm").serialize();
+                    console.log("cameraData: ", cameraData);
+                    if (inputActualCameraId.value === "new") {
+                        //new
+                        $.post(API_URL, cameraData, (result) => {
+                            if (result) {
+                                $("#closeCameraDetailButton").click();
+                            }
+                            else {
+                                
+                            }
+                        });
+                    }
+                    else {
+                        $.post()
+                    }
+                }
+            }
+
             const remove = {
                 camera(index) {
                     data.cameras.splice(index, 1);
@@ -493,6 +516,8 @@
                     const buttonEdit = document.getElementById("cameraDetailEdit");
                     const buttonSubmit = document.getElementById("cameraDetailSubmit");
 
+                    const inputActualCameraId = document.getElementById("actualCameraId");
+
                     const inputCameraName = document.getElementById("cameraName");
                     const inputCamera = document.getElementById("acc_name");
                     const inputPassword = document.getElementById("acc_pass");
@@ -511,6 +536,7 @@
                         utils.setAndDisable(inputCamera, "", disabled);
                         utils.setAndDisable(inputPassword, "", disabled);
                         utils.setAndDisable(inputIpAddress, "", disabled);
+                        utils.setAndDisable(inputActualCameraId, "new", disabled);
                         utils.setAndDisable(inputCameraType, "IP", disabled);
                         utils.setAndDisable(inputCameraName, "", disabled);
                     }
@@ -520,16 +546,18 @@
                         utils.setAndDisable(inputPassword, inputPassword.value, disabled);
                         utils.setAndDisable(inputIpAddress, inputIpAddress.value, disabled);
                         utils.setAndDisable(inputCameraType, inputCameraType.value, disabled);
+                        utils.setAndDisable(inputActualCameraId, inputActualCameraId.value, disabled);
                         utils.setAndDisable(inputCameraName, inputCameraName.value, disabled);
                     }
                     // zobrazuje sa detail
                     else {
-                        $.getJSON(URL + "/" + POSTFIX_CAMERA, (cameraDetail) =>{
+                        $.getJSON(API_URL + "/" + POSTFIX_CAMERA + "/" + camera.id , (cameraDetail) =>{
                             cameraDetail = Camera.parse(cameraDetail[0]);
                             utils.setAndDisable(inputCamera, cameraDetail.login, disabled);
                             utils.setAndDisable(inputPassword, cameraDetail.password, disabled);
                             utils.setAndDisable(inputIpAddress, cameraDetail.ip, disabled);
                             utils.setAndDisable(inputCameraType, cameraDetail.type, disabled);
+                            utils.setAndDisable(inputActualCameraId, cameraDetail.value, disabled);
                             utils.setAndDisable(inputCameraName, cameraDetail.name, disabled);
                         });
                     }
@@ -584,7 +612,7 @@
                     }
                     // zobrazuje sa detail
                     else {
-                        $.getJSON(URL + "/" + POSTFIX_VIEW, (Option) => {
+                        $.getJSON(API_URL + "/" + POSTFIX_VIEW, (Option) => {
                             Option = View.parse(Option[0]);
                             utils.setAndDisable(inputOptionCamera, Option.camera.id, disabled);
                             utils.setAndDisable(inputOptionName, Option.name, disabled);
@@ -602,7 +630,7 @@
                 detail(item) {
                     const params = {};
                     //posleme HTTP request
-                    $.post(URL + "/detail/" + item, params, () => {
+                    $.post(API_URL + "/detail/" + item, params, () => {
                         console.log(params);
                     }, "json");
                 }
@@ -612,48 +640,48 @@
                 main() {
                     const params = {};
                     // posleme HTTP request pre získanie obrázkov
-                    $.post(URL + "/browse", params, (data) => {
-                        // ak je odpoved pole
-                        if (Array.isArray(data)) {
+                    // $.post(API_URL + "/browse", params, (data) => {
+                    //     // ak je odpoved pole
+                    //     if (Array.isArray(data)) {
 
-                            console.log(data)
+                    //         console.log(data)
 
-                            let result = "";
-                            // prejdeme celym polom
-                            data.forEach((item) => {
+                    //         let result = "";
+                    //         // prejdeme celym polom
+                    //         data.forEach((item) => {
 
-                                // pridame riadok
-                                result += `
-                                <tr>
-                                    <td>${item.id}</td>
-                                    <td>${item.nazov}</td>
-                                    <td>${item.Vytvorena}</td>
-                                    <td>${item.poznamka}</td>
-                                    <td class="buttons">
-                                        <button type="button" class="btn btn-default btn-sm">
-                                            <span class="glyphicon glyphicon-remove"></span>
-                                        </button>
-                                        <button type="button"
-                                                class="btn btn-default btn-sm"
-                                                data-toggle="modal"
-                                                data-target="#detailModal"
-                                                onclick="show.detail(${item.id})">
-                                            <span class="glyphicon glyphicon-info-sign"></span>
-                                        </button>
-                                        <button type="button"
-                                                class="btn btn-default btn-sm"
-                                                data-toggle="modal"
-                                                data-target="#previewModal">
-                                            <span class="glyphicon glyphicon-eye-open"></span>
-                                        </button>
-                                    </td>
-                                </tr>
-                            `;
-                            });
-                            // cely vysledok pridame do tabulky
-                            document.getElementById("tableShotsContent").innerHTML = result;
-                        }
-                    }, "json");
+                    //             // pridame riadok
+                    //             result += `
+                    //             <tr>
+                    //                 <td>${item.id}</td>
+                    //                 <td>${item.nazov}</td>
+                    //                 <td>${item.Vytvorena}</td>
+                    //                 <td>${item.poznamka}</td>
+                    //                 <td class="buttons">
+                    //                     <button type="button" class="btn btn-default btn-sm">
+                    //                         <span class="glyphicon glyphicon-remove"></span>
+                    //                     </button>
+                    //                     <button type="button"
+                    //                             class="btn btn-default btn-sm"
+                    //                             data-toggle="modal"
+                    //                             data-target="#detailModal"
+                    //                             onclick="show.detail(${item.id})">
+                    //                         <span class="glyphicon glyphicon-info-sign"></span>
+                    //                     </button>
+                    //                     <button type="button"
+                    //                             class="btn btn-default btn-sm"
+                    //                             data-toggle="modal"
+                    //                             data-target="#previewModal">
+                    //                         <span class="glyphicon glyphicon-eye-open"></span>
+                    //                     </button>
+                    //                 </td>
+                    //             </tr>
+                    //         `;
+                    //         });
+                    //         // cely vysledok pridame do tabulky
+                    //         document.getElementById("tableShotsContent").innerHTML = result;
+                    //     }
+                    // }, "json");
 
                     elements.searchInput.onkeyup = () => {
                         // if (event.keyCode === 13) { //Enter
@@ -665,7 +693,7 @@
                     };
 
 
-                    $.getJSON(URL + "/" + POSTFIX_INIT, (response) => {
+                    $.getJSON(API_URL + "/" + POSTFIX_INIT, (response) => {
                         while(data.cameras.length){
                             data.cameras.splice(0, 1);
                         }
@@ -686,7 +714,7 @@
                         set.shots();
 
                         const html = "<option></option>" + data.cameras.map((camera) => {
-                            return `<option value="${camera.k_id}">${camera.k_nazov}</option>`;
+                            return `<option value="${camera.id}">${camera.name}</option>`;
                         }).join("");
                         $('.js-example-basic-single').html(html).select2({
                             placeholder: 'Kamera pre ktorú sú určené nastavenia',
@@ -852,9 +880,9 @@
             $(function () {
                 elements.searchInput.value = utils.getParameterByName("search");
 
-                $.getJSON(URL + "/initData.json", (data) => {
-                    console.log("data: ", data);
-                }, "json");
+                // $.getJSON(API_URL + "/initData.json", (data) => {
+                //     console.log("data: ", data);
+                // }, "json");
 
                 init.main();
                 init.view();
