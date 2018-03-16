@@ -1,26 +1,26 @@
 {
    "snimky":[
       {
-         "s_Vytvorena":"2018-02-19 23:03:32.993093",
-         "s_poznamka":"ok",
-         "s_id":2,
-         "s_nazov":"snimka0001.jpg",
+         "Vytvorena":"2018-02-19 23:03:32.993093",
+         "poznamka":"ok",
+         "id":2,
+         "nazov":"snimka0001.jpg",
          "kamera":"nejaka kamera",
          "nastavenie":"nejake nastavenie"
       },
       {
-         "s_Vytvorena":"2018-02-19 23:03:32.993093",
-         "s_poznamka":"zla",
-         "s_id":3,
-         "s_nazov":"snimka0002.jpg",
+         "Vytvorena":"2018-02-19 23:03:32.993093",
+         "poznamka":"zla",
+         "id":3,
+         "nazov":"snimka0002.jpg",
          "kamera":"nejaka kamera",
          "nastavenie":"nejake nastavenie"
       },
       {
-         "s_Vytvorena":"2018-02-19 23:03:32.993093",
-         "s_poznamka":"ok",
-         "s_id":4,
-         "s_nazov":"snimka00023.jpg",
+         "Vytvorena":"2018-02-19 23:03:32.993093",
+         "poznamka":"ok",
+         "id":4,
+         "nazov":"snimka00023.jpg",
          "kamera":"nejaka kamera",
          "nastavenie":"nejake nastavenie"
       }
@@ -44,7 +44,9 @@
       {
          "k_id":4,
          "k_typ":"IP",
-         "k_nazov":"moja druha IP kamera"
+         "k_nazov":"moja druha IP kamera",
+         "prihlavacie_meno":"admin",
+         "prihlasovacie_heslo":"heslo1"
       },
       {
          "k_id":5,
@@ -52,7 +54,7 @@
          "k_nazov":"moja tretia IP kamera"
       }
    ],
-   "vies":[
+   "views":[
       {
          "n_nazov":"moje prve nastavenie",
          "n_kamera_meno":"moja druha USB kamera",

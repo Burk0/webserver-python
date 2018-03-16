@@ -418,8 +418,8 @@
                 }
             }
 
-            //const API_URL = "http://127.0.0.1:8081";
-            const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons";
+            const API_URL = "http://127.0.0.1:8081";
+            // const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons";
             const POSTFIX_INIT = "initData.json";
             const POSTFIX_CAMERA = "KameraDetail.json";
             const POSTFIX_SHOT = "SnimkaDetail.json";
@@ -703,7 +703,7 @@
                         while(data.views.length){
                             data.views.splice(0, 1);
                         }
-                        data.views.push.apply(data.views, response.vies.map(View.parse));
+                        data.views.push.apply(data.views, response.views.map(View.parse));
                         set.options();
 
 
