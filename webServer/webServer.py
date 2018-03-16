@@ -4,6 +4,9 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from Database import database
 
+from Model import Jsons
+
+import json
 
 class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
@@ -11,17 +14,23 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
         print(self.path)
         # page = self.create_page()
         # if self.path.endswith("/browse"):
-        if "/" in self.path:
+        if "/" == self.path:
             self.send_page('Web/index2.html')
 
-        if self.path.endswith("/initData.json"):
+        elif "/initData.json" == self.path:
+            with open('C:\\Users\\david.buransky\\PycharmProjects\\webserver-python\\Model\\Jsons\\initData.json') as json_file:
+                data = json.load(json_file)
             print("tu som"  + self.path)
+            print(data)
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             # print(self.json_string)
-            db = database.Database
-            self.wfile.write(bytes(db.initDataFile(db), "utf8"))
+            # db = database.Database
+
+            self.wfile.write(bytes(json.dumps(data),"utf8"))
+            # self.wfile.write(bytes(db.initDataFile(db), "utf8"))
         # elif self.path.endswith("/cams"):
         # #     print("ina stranka")
         #     self.send_page('addCamForm.html')
@@ -43,6 +52,8 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
     def do_POST(self):
         print(self.path)
+
+        self.do_GET()
         # if self.path.endswith("/browse"):
         #     print(self.path)
         #     self.send_response(200)
@@ -82,8 +93,8 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
 def run():
     print('starting server...')
-    server_address = ('127.0.0.1', 8081)
+    server_address = ('0.0.0.0', 8081)
 
-    httpd = HTTPServer(server_address,testHTTPServer_RequestHanlder)
+    httpd = HTTPServer(server_address, testHTTPServer_RequestHanlder)
     print('running server...')
     httpd.serve_forever()

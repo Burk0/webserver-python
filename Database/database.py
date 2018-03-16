@@ -4,7 +4,7 @@ import datetime
 import json
 
 import psycopg2
-from Model import view, snimka, kamera, JsonData, JsonModel
+from Model import view, snimka, kamera
 
 connect_str = "dbname='Bc_new' user='postgres' host='localhost' " + \
               "password='admin1234'"
