@@ -419,11 +419,14 @@
             }
 
             const API_URL = "http://127.0.0.1:8081";
-            // const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons";
+            //const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons";
             const POSTFIX_INIT = "initData.json";
             const POSTFIX_CAMERA = "KameraDetail.json";
             const POSTFIX_SHOT = "SnimkaDetail.json";
             const POSTFIX_VIEW = "VIewDetail.json";
+            const POSTFIX_USBCAM = "UsbCams.json"
+            const POSTFIX_AddCam = "AddCam"
+            const POSTFIX_AddView = "Addview"
 
             const elements = {
                 searchInput: document.getElementById("search"),
@@ -485,7 +488,7 @@
                                 $("#closeCameraDetailButton").click();
                             }
                             else {
-                                
+
                             }
                         });
                     }
@@ -552,7 +555,8 @@
                     // zobrazuje sa detail
                     else {
                         $.getJSON(API_URL + "/" + POSTFIX_CAMERA + "/" + camera.id , (cameraDetail) =>{
-                            cameraDetail = Camera.parse(cameraDetail[0]);
+                            console.log("Po response"+ cameraDetail.login)
+                            cameraDetail = Camera.parse(cameraDetail);
                             utils.setAndDisable(inputCamera, cameraDetail.login, disabled);
                             utils.setAndDisable(inputPassword, cameraDetail.password, disabled);
                             utils.setAndDisable(inputIpAddress, cameraDetail.ip, disabled);
@@ -612,7 +616,7 @@
                     }
                     // zobrazuje sa detail
                     else {
-                        $.getJSON(API_URL + "/" + POSTFIX_VIEW, (Option) => {
+                        $.getJSON(API_URL + "/" + POSTFIX_VIEW + "/" + Option.id, (Option) => {
                             Option = View.parse(Option[0]);
                             utils.setAndDisable(inputOptionCamera, Option.camera.id, disabled);
                             utils.setAndDisable(inputOptionName, Option.name, disabled);
@@ -639,49 +643,7 @@
             const init = {
                 main() {
                     const params = {};
-                    // posleme HTTP request pre získanie obrázkov
-                    // $.post(API_URL + "/browse", params, (data) => {
-                    //     // ak je odpoved pole
-                    //     if (Array.isArray(data)) {
 
-                    //         console.log(data)
-
-                    //         let result = "";
-                    //         // prejdeme celym polom
-                    //         data.forEach((item) => {
-
-                    //             // pridame riadok
-                    //             result += `
-                    //             <tr>
-                    //                 <td>${item.id}</td>
-                    //                 <td>${item.nazov}</td>
-                    //                 <td>${item.Vytvorena}</td>
-                    //                 <td>${item.poznamka}</td>
-                    //                 <td class="buttons">
-                    //                     <button type="button" class="btn btn-default btn-sm">
-                    //                         <span class="glyphicon glyphicon-remove"></span>
-                    //                     </button>
-                    //                     <button type="button"
-                    //                             class="btn btn-default btn-sm"
-                    //                             data-toggle="modal"
-                    //                             data-target="#detailModal"
-                    //                             onclick="show.detail(${item.id})">
-                    //                         <span class="glyphicon glyphicon-info-sign"></span>
-                    //                     </button>
-                    //                     <button type="button"
-                    //                             class="btn btn-default btn-sm"
-                    //                             data-toggle="modal"
-                    //                             data-target="#previewModal">
-                    //                         <span class="glyphicon glyphicon-eye-open"></span>
-                    //                     </button>
-                    //                 </td>
-                    //             </tr>
-                    //         `;
-                    //         });
-                    //         // cely vysledok pridame do tabulky
-                    //         document.getElementById("tableShotsContent").innerHTML = result;
-                    //     }
-                    // }, "json");
 
                     elements.searchInput.onkeyup = () => {
                         // if (event.keyCode === 13) { //Enter
@@ -862,6 +824,20 @@
                             <td>${shot.camera.name}</td>
                             <td>${shot.view.name}</td>
                             <td>
+                            <button type="button"
+                                        class="btn btn-default btn-sm"
+                                        onclick="show.viewDetail(${index})"
+                                        data-toggle="modal"
+                                        data-target="#detailViewForm">
+                                    <span class="glyphicon glyphicon-info-sign"></span>
+                                </button>
+                                <button type="button"
+                                        class="btn btn-default btn-sm"
+                                        onclick="show.viewDetail(${index}, false)"
+                                        data-toggle="modal"
+                                        data-target="#detailViewForm">
+                                    <span class="glyphicon glyphicon-edit"></span>
+                                </button>
                                 <button type="button"
                                         class="btn btn-default btn-sm"
                                         onclick="remove.shot(${index})">
@@ -880,9 +856,6 @@
             $(function () {
                 elements.searchInput.value = utils.getParameterByName("search");
 
-                // $.getJSON(API_URL + "/initData.json", (data) => {
-                //     console.log("data: ", data);
-                // }, "json");
 
                 init.main();
                 init.view();

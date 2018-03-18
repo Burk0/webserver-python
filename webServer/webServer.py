@@ -3,34 +3,64 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from Database import database
+from utils import SystemoveVolanie
 
-from Model import Jsons
-
-import json
 
 class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        print(self.path)
+        print("ZACIATOK" + self.path)
+        db = database.Database
         # page = self.create_page()
         # if self.path.endswith("/browse"):
         if "/" == self.path:
+            # print("tutu som " + self.path)
             self.send_page('Web/index2.html')
 
-        elif "/initData.json" == self.path:
-            with open('C:\\Users\\david.buransky\\PycharmProjects\\webserver-python\\Model\\Jsons\\initData.json') as json_file:
-                data = json.load(json_file)
+        elif self.path.endswith("/initData.json"):
             print("tu som"  + self.path)
-            print(data)
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             # print(self.json_string)
-            # db = database.Database
 
-            self.wfile.write(bytes(json.dumps(data),"utf8"))
-            # self.wfile.write(bytes(db.initDataFile(db), "utf8"))
+            self.wfile.write(bytes(db.getInitData(db), "utf8"))
+
+        elif  "/KameraDetail.json" in self.path :
+            print("som v detaile  " + self.path)
+            print(self.path.split("/")[2])
+            id = self.path.split("/")[2]
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            # print(db.getCamDetail(db,id))
+            self.wfile.write(bytes(db.getCamDetail(db,id), "utf8"))
+
+        elif "/ViewDetail.json" in self.path:
+            print("som v View detaile  " + self.path)
+            id = self.path.split("/")[2]
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            # print(db.getCamDetail(db,id))
+            self.wfile.write(bytes(db.getViewDetail(db, id), "utf8"))
+
+
+        elif "UsbCams.json" in self.path:
+            print("vracima vsetky USBcamery")
+            SystemoveVolanie.getAllUsbCam()
+
+
+        elif "addCam" in self.path:
+            print("pridanie novej kamery")
+            #TODO zavolanie db a pozretie nazvu takej kamery, ak existuje nevlozist a vratit false
+            #TODO ak neexistuje tak insert a vratit true a poslat spat na stranku
+
+
+        elif "addView" in self.path:
+            print("pridanie noveho nastavenia")
+            # TODO zavolanie db a pozretie nazvu takej kamery, ak existuje nevlozist a vratit false
+            # TODO ak neexistuje tak insert a vratit true a poslat spat na stranku
         # elif self.path.endswith("/cams"):
         # #     print("ina stranka")
         #     self.send_page('addCamForm.html')
@@ -51,9 +81,7 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
 
     def do_POST(self):
-        print(self.path)
-
-        self.do_GET()
+        print("POST:"+self.path)
         # if self.path.endswith("/browse"):
         #     print(self.path)
         #     self.send_response(200)
@@ -93,8 +121,7 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
 def run():
     print('starting server...')
-    server_address = ('0.0.0.0', 8081)
-
-    httpd = HTTPServer(server_address, testHTTPServer_RequestHanlder)
+    server_address = ('127.0.0.1', 8081)
+    httpd = HTTPServer(server_address,testHTTPServer_RequestHanlder)
     print('running server...')
     httpd.serve_forever()

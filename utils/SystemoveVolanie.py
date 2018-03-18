@@ -16,7 +16,4 @@ def getAllUsbCam():
     data.append({'desc':tmp[0],'name':tmp[1]})
 
     print (json.dumps(data))
-
-getAllUsbCam()
-
-
+    return json.dumps(data)

@@ -1,11 +1,12 @@
-[{
-	"cas_do": null,
-	"greyscale": true,
-	"interval_medzi_fotkami": 70,
-	"interval_mazania_fotky": 2000,
-	"cas_od": null,
-	"meno": "moje prve nastavenie",
-	"prz_motion_detektor": false,
-	"nova_fotka_pri_chybe": 5,
-	"id_kamera" : 22
-}]
+[
+    {
+        "interval_mazania_fotky": null,
+        "prz_motion_detektor": true,
+        "interval_medzi_fotkami": null,
+        "greyscale": true,
+        "meno": "moj motion",
+        "cas_od": null,
+        "nova_fotka_pri_chybe": null,
+        "cas_do": null
+    }
+]

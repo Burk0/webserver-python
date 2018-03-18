@@ -4,7 +4,7 @@ import datetime
 import json
 
 import psycopg2
-from Model import view, snimka, kamera
+from Model import view, snimka, kamera, JsonData,JsonModel
 
 connect_str = "dbname='Bc_new' user='postgres' host='localhost' " + \
               "password='admin1234'"
@@ -58,7 +58,7 @@ class Database(object):
                 self.listKamier.append(kamera.Kamera(r[0], r[1], r[2]))
 
 
-            cursor.execute("select v.view_id,v.view_meno,k.kamera_meno from view v join kamera k ON k.kamera_id = v.view_id")
+            cursor.execute("select v.view_id,v.view_meno,k.kamera_meno from view v left join kamera k ON k.kamera_id = v.kamera_id")
             rows=cursor.fetchall()
             for r in rows:
                 listNastaveni.append(view.View(r[0], r[1], r[2]))
@@ -147,7 +147,7 @@ class Database(object):
 
         data = []
         if (row is not None):
-            data.append({'meno': row[0],'typ': row[1], 'prihlasovacie_meno':row[2],'prihlasovacie_heslo':row[3],'ip':row[4],'descriptor':row[5]})
+            data.append({'name': row[0],'type': row[1], 'login':row[2],'password':row[3],'ip':row[4],'descriptor':row[5]})
 
             odata = JsonModel.JsonModel(data)
             # print(json.dumps(data))
@@ -176,10 +176,7 @@ class Database(object):
                          'interval_mazania_fotky':row[6],'prz_motion_detektor':row[7],'cas_od':row[9],
                          'cas_do':row[10],'greyscale':row[11]})
 
-            # print(json.dumps(data, default=self.myconverter))
-            odata = JsonModel.JsonModel(data)
-            # print(json.dumps(data))
-            return json.dumps(odata.__dict__, default=self.myconverter)
+            return json.dumps(data, default=self.myconverter)
         else:
             return None
 
