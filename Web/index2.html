@@ -167,7 +167,8 @@
         <div id="previewModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <img id="imagePreview" src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"
+                    <img id="imagePreview"
+                         src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"
                          alt="preview">
                 </div>
             </div>
@@ -198,7 +199,11 @@
                             </select>
 
                             <div id="usb">
-                                Tu bude list usb
+                                <div class="form-group">
+                                    <label for="usbList">Zoznam USB kamier bičíííz:</label>
+                                    <select class="form-control" id="usbList">
+                                    </select>
+                                </div>
                                 <input type="button" class="btn btn-primary" value="Test"/>
                             </div>
 
@@ -223,7 +228,11 @@
                                    class="btn btn-primary hidden"
                                    onclick="show.cameraDetail(null, false)"
                                    id="cameraDetailEdit"/>
-                            <input type="button" value="Uložiť" onclick="()" class="btn btn-primary hidden" id="cameraDetailSubmit"/>
+                            <input type="button"
+                                   value="Uložiť"
+                                   onclick="handlers.cameraSave()"
+                                   class="btn btn-primary hidden"
+                                   id="cameraDetailSubmit"/>
                         </form>
                     </div>
 
@@ -398,11 +407,12 @@
                 }
             }
             class Shot {
-                constructor(created, note, id, name, camera, view) {
+                constructor(created, note, id, name, camera, view, previewUrl) {
                     this.created = created;
                     this.note = note;
                     this.id = id;
                     this.name = name;
+                    this.previewUrl = previewUrl;
                     this.camera = camera;
                     this.view = view;
                 }
@@ -413,7 +423,8 @@
                         shot.id,
                         shot.nazov,
                         new Camera(1, shot.kamera || "unknown camera name"),
-                        new View(1, shot.nastavenie || "unknown view name")
+                        new View(1, shot.nastavenie || "unknown view name"),
+                        shot.previewUrl
                     )
                 }
             }
@@ -424,9 +435,9 @@
             const POSTFIX_CAMERA = "KameraDetail.json";
             const POSTFIX_SHOT = "SnimkaDetail.json";
             const POSTFIX_VIEW = "VIewDetail.json";
-            const POSTFIX_USBCAM = "UsbCams.json"
-            const POSTFIX_AddCam = "AddCam"
-            const POSTFIX_AddView = "Addview"
+            const POSTFIX_USB_CAM = "UsbCams.json";
+            const POSTFIX_AddCam = "AddCam";
+            const POSTFIX_AddView = "Addview";
 
             const elements = {
                 searchInput: document.getElementById("search"),
@@ -496,7 +507,7 @@
                         $.post()
                     }
                 }
-            }
+            };
 
             const remove = {
                 camera(index) {
@@ -515,6 +526,14 @@
             };
 
             const show = {
+                openDetail(index) {
+                    const imageElement = document.getElementById("imagePreview");
+                    const selectedImage = data.shots[index];
+                    if (!selectedImage) {
+                        throw new Error("neplatná kamera s id: ", index);
+                    }
+                    imageElement.setAttribute("src", selectedImage.previewUrl);
+                },
                 cameraDetail(cameraId = "new", disabled) {
                     const buttonEdit = document.getElementById("cameraDetailEdit");
                     const buttonSubmit = document.getElementById("cameraDetailSubmit");
@@ -528,6 +547,18 @@
                     const inputCameraType = document.getElementById("cam");
 
                     const camera = data.cameras[cameraId];
+
+                    $.getJSON(API_URL + "/" + POSTFIX_USB_CAM, (result) => {
+                        const usbCamerasSelect = document.getElementById("usbList");
+                        let body = "";
+                        result.forEach((item) => {
+                            body += `
+                                <option value="${item}">${item}</option>
+                            `;
+                        });
+                        usbCamerasSelect.innerHTML = body;
+                    });
+
 
                     disabled = typeof disabled === "undefined" ? cameraId !== "new" : disabled;
 
@@ -833,7 +864,7 @@
                                 </button>
                                 <button type="button"
                                         class="btn btn-default btn-sm"
-                                        onclick="show.viewDetail(${index}, false)"
+                                        onclick="show.openDetail(${index}, false)"
                                         data-toggle="modal"
                                         data-target="#detailViewForm">
                                     <span class="glyphicon glyphicon-edit"></span>
