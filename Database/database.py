@@ -49,7 +49,7 @@ class Database(object):
             # print(len(rows))
             for r in rows:
                 # print(r[0])
-                list.append(snimka.Snimka(r[0], r[1], r[3], r[6], r[7],r[8]))
+                list.append(snimka.Snimka(r[0], r[1], r[3], r[6], r[9],r[8]))
 
 
             cursor.execute("select * from kamera")
@@ -71,7 +71,6 @@ class Database(object):
         # for r in list:
         #     print(str(list[0].id))
         # print(list)
-        data = []
         data_imgs = []
         data_cams = []
         data_views = []
@@ -98,7 +97,6 @@ class Database(object):
 
 
 
-        # print(json.dumps(oData.__dict__, default=self.myconverter))
         # sdata = str(data)
         # print(sdata)
         return json.dumps(oData.__dict__,default=self.myconverter)
@@ -145,13 +143,12 @@ class Database(object):
                     print("Uh oh, can't connect. Invalid dbname, user or password?")
                     print(e)
 
-        data = []
         if (row is not None):
-            data.append({'name': row[0],'type': row[1], 'login':row[2],'password':row[3],'ip':row[4],'descriptor':row[5]})
+            # data.append({'nazov': row[0],'typ': row[1], 'prihlasovacie_meno':row[2],'prihlasovacie_heslo':row[3],'ip':row[4],'descriptor':row[5]})
 
-            odata = JsonModel.JsonModel(data)
+            # odata = JsonModel.JsonModel(data)
             # print(json.dumps(data))
-            return json.dumps(odata.__dict__)
+            return json.dumps({'nazov': row[0],'typ': row[1], 'prihlasovacie_meno':row[2],'prihlasovacie_heslo':row[3],'ip':row[4],'descriptor':row[5]})
         else:
             return None
 
@@ -170,13 +167,10 @@ class Database(object):
                     print("Uh oh, can't connect. Invalid dbname, user or password?")
                     print(e)
         # print(len(rows))
-        data = []
         if(row is not None):
-            data.append({'meno': row[1],'interval_medzi_fotkami': row[2], 'nova_fotka_pri_chybe':row[4],
+            return json.dumps({'meno': row[1],'interval_medzi_fotkami': row[2], 'nova_fotka_pri_chybe':row[4],
                          'interval_mazania_fotky':row[6],'prz_motion_detektor':row[7],'cas_od':row[9],
-                         'cas_do':row[10],'greyscale':row[11]})
-
-            return json.dumps(data, default=self.myconverter)
+                         'cas_do':row[10],'greyscale':row[11]}, default=self.myconverter)
         else:
             return None
 

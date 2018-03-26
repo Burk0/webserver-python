@@ -14,6 +14,11 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
+
+		<!-- Bootstrap Date-Picker Plugin -->
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
         <style>
             tr, label {
                 cursor: pointer;
@@ -62,6 +67,35 @@
                             <input type="text" class="form-control" name="search" id="search" placeholder="Hľadať">
                             <span class="glyphicon glyphicon-search form-control-feedback"></span>
                         </div>
+
+
+                        <div class="container">
+					    <div class='col-md-5'>
+					        <div class="form-group">
+					            <div class='input-group date' id='datetimepicker6'>
+					                <input type='text' class="form-control" />
+					                <span class="input-group-addon">
+					                    <span class="glyphicon glyphicon-calendar"></span>
+					                </span>
+					            </div>
+					        </div>
+					    </div>
+					    <div class='col-md-5'>
+					        <div class="form-group">
+					            <div class='input-group date' id='datetimepicker7'>
+					                <input type='text' class="form-control" />
+					                <span class="input-group-addon">
+					                    <span class="glyphicon glyphicon-calendar"></span>
+					                </span>
+					            </div>
+					        </div>
+					    </div>
+					</div>
+
+
+
+
+
                     <!--</form>-->
                     <ul class="nav nav-tabs">
                         <li class="active">
@@ -200,7 +234,7 @@
 
                             <div id="usb">
                                 <div class="form-group">
-                                    <label for="usbList">Zoznam USB kamier bičíííz:</label>
+                                    <label for="usbList">Zoznam USB kamier:</label>
                                     <select class="form-control" id="usbList">
                                     </select>
                                 </div>
@@ -368,7 +402,7 @@
                 static parse(camera) {
                     return new Camera(
                         camera.id || camera.k_id,
-                        camera.meno || camera.k_nazov,
+                        camera.meno || camera.k_nazov || camera.nazov,
                         camera.prihlasovacie_meno,
                         camera.prihlasovacie_heslo,
                         camera.ip,
@@ -431,13 +465,14 @@
 
             const API_URL = "http://127.0.0.1:8081";
             //const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons";
-            const POSTFIX_INIT = "initData.json";
-            const POSTFIX_CAMERA = "KameraDetail.json";
-            const POSTFIX_SHOT = "SnimkaDetail.json";
-            const POSTFIX_VIEW = "VIewDetail.json";
-            const POSTFIX_USB_CAM = "UsbCams.json";
+            const POSTFIX_INIT = "initData";
+            const POSTFIX_CAMERA = "KameraDetail";
+            const POSTFIX_SHOT = "SnimkaDetail";
+            const POSTFIX_VIEW = "ViewDetail";
+            const POSTFIX_USB_CAM = "UsbCams";
             const POSTFIX_AddCam = "AddCam";
             const POSTFIX_AddView = "Addview";
+            const POSTFIX_DEC_VIEW = "DelView";
 
             const elements = {
                 searchInput: document.getElementById("search"),
@@ -517,6 +552,7 @@
                 option(index) {
                     data.views.splice(index, 1);
                     set.options();
+
                 },
                 shot(index) {
                     data.shots.splice(index, 1);
@@ -553,7 +589,7 @@
                         let body = "";
                         result.forEach((item) => {
                             body += `
-                                <option value="${item}">${item}</option>
+                                <option value="${item.desc}">${item.name}</option>
                             `;
                         });
                         usbCamerasSelect.innerHTML = body;
@@ -586,7 +622,7 @@
                     // zobrazuje sa detail
                     else {
                         $.getJSON(API_URL + "/" + POSTFIX_CAMERA + "/" + camera.id , (cameraDetail) =>{
-                            console.log("Po response"+ cameraDetail.login)
+                            console.log("Po response "+ cameraDetail.prihlasovacie_meno)
                             cameraDetail = Camera.parse(cameraDetail);
                             utils.setAndDisable(inputCamera, cameraDetail.login, disabled);
                             utils.setAndDisable(inputPassword, cameraDetail.password, disabled);
@@ -728,7 +764,7 @@
                     const usbElement = document.getElementById("usb");
 
                     $("#cameraDetailSubmit").click(function () {
-                        $.post("URL/addCam?" + $("form").serialize(), {}, function (response) {
+                        $.getJSON(API_URL + "/addCam?" + $("form").serialize(), {}, function (response) {
                             console.log("response: ", response);
                         })
                     });
@@ -887,6 +923,16 @@
             $(function () {
                 elements.searchInput.value = utils.getParameterByName("search");
 
+                <!--$('#datetimepicker6').datetimepicker();-->
+		        <!--$('#datetimepicker7').datetimepicker({-->
+		            <!--useCurrent: false //Important! See issue #1075-->
+		        <!--});-->
+		        <!--$("#datetimepicker6").on("dp.change", function (e) {-->
+		            <!--$('#datetimepicker7').data("DateTimePicker").minDate(e.date);-->
+		        <!--});-->
+		        <!--$("#datetimepicker7").on("dp.change", function (e) {-->
+		            <!--$('#datetimepicker6').data("DateTimePicker").maxDate(e.date);-->
+		        <!--});-->
 
                 init.main();
                 init.view();

@@ -17,7 +17,7 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
             # print("tutu som " + self.path)
             self.send_page('Web/index2.html')
 
-        elif self.path.endswith("/initData.json"):
+        elif self.path.endswith("/initData"):
             print("tu som"  + self.path)
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
@@ -26,17 +26,17 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
             self.wfile.write(bytes(db.getInitData(db), "utf8"))
 
-        elif  "/KameraDetail.json" in self.path :
+        elif  "/KameraDetail" in self.path :
             print("som v detaile  " + self.path)
             print(self.path.split("/")[2])
             id = self.path.split("/")[2]
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            # print(db.getCamDetail(db,id))
+            print(db.getCamDetail(db,id))
             self.wfile.write(bytes(db.getCamDetail(db,id), "utf8"))
 
-        elif "/ViewDetail.json" in self.path:
+        elif "/ViewDetail" in self.path:
             print("som v View detaile  " + self.path)
             id = self.path.split("/")[2]
             self.send_response(200)
@@ -46,9 +46,14 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
             self.wfile.write(bytes(db.getViewDetail(db, id), "utf8"))
 
 
-        elif "UsbCams.json" in self.path:
+        elif "/UsbCams" in self.path:
             print("vracima vsetky USBcamery")
-            SystemoveVolanie.getAllUsbCam()
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            # print(db.getCamDetail(db,id))
+            self.wfile.write(bytes(SystemoveVolanie.getAllUsbCam(), "utf8"))
+
 
 
         elif "addCam" in self.path:
