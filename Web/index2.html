@@ -237,7 +237,7 @@
                                     <select class="form-control" id="usbList">
                                     </select>
                                 </div>
-                                <input type="button" class="btn btn-primary" value="Test"/>
+                                <input type="button" class="btn btn-primary" onclick="getImageFromCam()" value="Test"/>
                             </div>
 
                             <div id="ip">
@@ -951,6 +951,13 @@
                 init.view();
                 init.camera();
             });
+
+            function getImageFromCam() {
+                var e = document.getElementById("usbList");
+                var choice = e.option[e.selectedIndex].text;
+                console.log("volba" + choice);
+
+            }
 
         </script>
     </body>
