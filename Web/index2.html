@@ -8,16 +8,14 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
 
-		<!-- Bootstrap Date-Picker Plugin -->
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+        <!-- Bootstrap Date-Picker Plugin -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
 
         <style>
             tr, label {
@@ -70,27 +68,27 @@
 
 
                         <div class="container">
-					    <div class='col-md-5'>
-					        <div class="form-group">
-					            <div class='input-group date' id='datetimepicker6'>
-					                <input type='text' class="form-control" />
-					                <span class="input-group-addon">
-					                    <span class="glyphicon glyphicon-calendar"></span>
-					                </span>
-					            </div>
-					        </div>
-					    </div>
-					    <div class='col-md-5'>
-					        <div class="form-group">
-					            <div class='input-group date' id='datetimepicker7'>
-					                <input type='text' class="form-control" />
-					                <span class="input-group-addon">
-					                    <span class="glyphicon glyphicon-calendar"></span>
-					                </span>
-					            </div>
-					        </div>
-					    </div>
-					</div>
+                        <div class='col-md-5'>
+                            <div class="form-group">
+                                <div class='input-group date' id='datetimepicker6'>
+                                    <input type='text' class="form-control" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-md-5'>
+                            <div class="form-group">
+                                <div class='input-group date' id='datetimepicker7'>
+                                    <input type='text' class="form-control" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
 
 
@@ -222,9 +220,10 @@
                     <!-- Modal body -->
                     <div class="modal-body">
                         <form action="#" id="cameraDetailForm">
-                            <div class="form-group">
+                            <div class="form-group" id="cameraNameDiv">
                                 <label for="cameraName">Nazov kamery:</label>
                                 <input type="text" class="form-control" id="cameraName" name="cameraName">
+                                <span class="glyphicon glyphicon-remove form-control-feedback"></span>
                             </div>
                             <label for="cam">Typ kamery:</label>
                             <select id="cam" title="Typ kamery" class="form-control">
@@ -463,8 +462,8 @@
                 }
             }
 
-            const API_URL = "http://127.0.0.1:8081";
-            //const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons";
+            // const API_URL = "http://127.0.0.1:8081";
+            const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons/initData.json";
             const POSTFIX_INIT = "initData";
             const POSTFIX_CAMERA = "KameraDetail";
             const POSTFIX_SHOT = "SnimkaDetail";
@@ -526,17 +525,30 @@
                 cameraSave() {
                     const inputActualCameraId = document.getElementById("actualCameraId");
                     const cameraData = $("#cameraDetailForm").serialize();
+
                     console.log("cameraData: ", cameraData);
                     if (inputActualCameraId.value === "new") {
                         //new
-                        $.post(API_URL, cameraData, (result) => {
-                            if (result) {
+                        if (false) {
+                            console.log("OKEj");
                                 $("#closeCameraDetailButton").click();
                             }
                             else {
-
+                                var element = document.getElementById("cameraNameDiv");
+                                element.classList.add("has-error");
+                                element.classList.add("has-feedback");
                             }
-                        });
+
+                        //TODO
+                        // $.post(API_URL, cameraData, (result) => {
+                        //     
+                        //     if (result.return) {
+                        //         $("#closeCameraDetailButton").click();
+                        //     }
+                        //     else {
+
+                        //     }
+                        // });
                     }
                     else {
                         $.post()
@@ -565,6 +577,7 @@
                 openDetail(index) {
                     const imageElement = document.getElementById("imagePreview");
                     const selectedImage = data.shots[index];
+                    console.log("otvaram img")
                     if (!selectedImage) {
                         throw new Error("neplatná kamera s id: ", index);
                     }
@@ -893,7 +906,7 @@
                             <td>
                             <button type="button"
                                         class="btn btn-default btn-sm"
-                                        onclick="show.viewDetail(${index})"
+                                        onclick="show.shotDetail(${index})"
                                         data-toggle="modal"
                                         data-target="#detailViewForm">
                                     <span class="glyphicon glyphicon-info-sign"></span>
@@ -924,15 +937,15 @@
                 elements.searchInput.value = utils.getParameterByName("search");
 
                 <!--$('#datetimepicker6').datetimepicker();-->
-		        <!--$('#datetimepicker7').datetimepicker({-->
-		            <!--useCurrent: false //Important! See issue #1075-->
-		        <!--});-->
-		        <!--$("#datetimepicker6").on("dp.change", function (e) {-->
-		            <!--$('#datetimepicker7').data("DateTimePicker").minDate(e.date);-->
-		        <!--});-->
-		        <!--$("#datetimepicker7").on("dp.change", function (e) {-->
-		            <!--$('#datetimepicker6').data("DateTimePicker").maxDate(e.date);-->
-		        <!--});-->
+                <!--$('#datetimepicker7').datetimepicker({-->
+                    <!--useCurrent: false //Important! See issue #1075-->
+                <!--});-->
+                <!--$("#datetimepicker6").on("dp.change", function (e) {-->
+                    <!--$('#datetimepicker7').data("DateTimePicker").minDate(e.date);-->
+                <!--});-->
+                <!--$("#datetimepicker7").on("dp.change", function (e) {-->
+                    <!--$('#datetimepicker6').data("DateTimePicker").maxDate(e.date);-->
+                <!--});-->
 
                 init.main();
                 init.view();
