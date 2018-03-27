@@ -61,6 +61,12 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
             #TODO zavolanie db a pozretie nazvu takej kamery, ak existuje nevlozist a vratit false
             #TODO ak neexistuje tak insert a vratit true a poslat spat na stranku
 
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            # print(db.getCamDetail(db,id))
+            self.wfile.write(bytes(db.getIfNameExists(db), "utf8"))
+
 
         elif "addView" in self.path:
             print("pridanie noveho nastavenia")

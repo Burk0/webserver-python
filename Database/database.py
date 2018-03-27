@@ -98,7 +98,7 @@ class Database(object):
 
 
         # sdata = str(data)
-        # print(sdata)
+        print(json.dumps(oData.__dict__,default=self.myconverter))
         return json.dumps(oData.__dict__,default=self.myconverter)
 
 
@@ -177,9 +177,9 @@ class Database(object):
     #metoda ktora mi vrati vsetky kamery v systeme
     def getIfNameExists(self):
         data = []
-        data.append({'return' : 0})
+        data.append({'return' : 'true'})
         odata = JsonModel.JsonModel(data)
-        # print(json.dumps(data))
+        print(json.dumps(data))
         return json.dumps(odata.__dict__, default=self.myconverter)
 
 

@@ -186,7 +186,7 @@
                         <h4 class="modal-title">Modal Header</h4>
                     </div>
                     <div class="modal-body" id="detail-content">
-                        <!--<p>Some text in the modal.</p>-->
+                        <p id="urltoFile"></p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -199,6 +199,7 @@
         <div id="previewModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
+                    bla
                     <img id="imagePreview"
                          src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"
                          alt="preview">
@@ -462,8 +463,8 @@
                 }
             }
 
-            // const API_URL = "http://127.0.0.1:8081";
-            const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons/initData.json";
+            const API_URL = "http://127.0.0.1:8081";
+            //const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons/initData.json";
             const POSTFIX_INIT = "initData";
             const POSTFIX_CAMERA = "KameraDetail";
             const POSTFIX_SHOT = "SnimkaDetail";
@@ -529,26 +530,29 @@
                     console.log("cameraData: ", cameraData);
                     if (inputActualCameraId.value === "new") {
                         //new
-                        if (false) {
-                            console.log("OKEj");
+                        // if (false) {
+                        //     console.log("OKEj");
+                        //         $("#closeCameraDetailButton").click();
+                        //     }
+                        //     else {
+                        //         var element = document.getElementById("cameraNameDiv");
+                        //         element.classList.add("has-error");
+                        //         element.classList.add("has-feedback");
+                        //     }
+
+                        //TODO
+                        $.getJSON(API_URL + POSTFIX_AddView, cameraData, (result) => {
+                            console.log(result[0].return)
+                            if (result.return) {
                                 $("#closeCameraDetailButton").click();
                             }
                             else {
                                 var element = document.getElementById("cameraNameDiv");
                                 element.classList.add("has-error");
                                 element.classList.add("has-feedback");
+
                             }
-
-                        //TODO
-                        // $.post(API_URL, cameraData, (result) => {
-                        //     
-                        //     if (result.return) {
-                        //         $("#closeCameraDetailButton").click();
-                        //     }
-                        //     else {
-
-                        //     }
-                        // });
+                        });
                     }
                     else {
                         $.post()
@@ -574,6 +578,12 @@
             };
 
             const show = {
+
+                shotDetail(index) {
+                    console.log("volam tuto " + data.shots[index].created)
+                    document.getElementById("urltoFile").innerHTML = data.shots[index].previewUrl;
+
+                },
                 openDetail(index) {
                     const imageElement = document.getElementById("imagePreview");
                     const selectedImage = data.shots[index];
@@ -908,14 +918,14 @@
                                         class="btn btn-default btn-sm"
                                         onclick="show.shotDetail(${index})"
                                         data-toggle="modal"
-                                        data-target="#detailViewForm">
+                                        data-target="#detailModal">
                                     <span class="glyphicon glyphicon-info-sign"></span>
                                 </button>
                                 <button type="button"
                                         class="btn btn-default btn-sm"
                                         onclick="show.openDetail(${index}, false)"
                                         data-toggle="modal"
-                                        data-target="#detailViewForm">
+                                        data-target="#previewModal">
                                     <span class="glyphicon glyphicon-edit"></span>
                                 </button>
                                 <button type="button"
