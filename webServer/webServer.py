@@ -3,6 +3,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from Database import database
+from Api import WebApi
 from utils import SystemoveVolanie
 
 
@@ -10,83 +11,15 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
     def do_GET(self):
         print("ZACIATOK" + self.path)
-        db = database.Database
+        # db = database.Database
+        if "/browse" in self.path:
+            WebApi.browseApi(self)
+
+        elif(self.path.count('/') == 3):
+            WebApi.shotApi(self,self.path)
+
         # page = self.create_page()
         # if self.path.endswith("/browse"):
-        if "/" == self.path:
-            # print("tutu som " + self.path)
-            self.send_page('Web/index2.html')
-
-        elif self.path.endswith("/initData"):
-            print("tu som"  + self.path)
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            # print(self.json_string)
-
-            self.wfile.write(bytes(db.getInitData(db), "utf8"))
-
-        elif  "/KameraDetail" in self.path :
-            print("som v detaile  " + self.path)
-            print(self.path.split("/")[2])
-            id = self.path.split("/")[2]
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            print(db.getCamDetail(db,id))
-            self.wfile.write(bytes(db.getCamDetail(db,id), "utf8"))
-
-        elif "/ViewDetail" in self.path:
-            print("som v View detaile  " + self.path)
-            id = self.path.split("/")[2]
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            # print(db.getCamDetail(db,id))
-            self.wfile.write(bytes(db.getViewDetail(db, id), "utf8"))
-
-
-        elif "/UsbCams" in self.path:
-            print("vracima vsetky USBcamery")
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            # print(db.getCamDetail(db,id))
-            self.wfile.write(bytes(SystemoveVolanie.getAllUsbCam(), "utf8"))
-
-
-
-        elif "addCam" in self.path:
-            print("pridanie novej kamery")
-            #TODO zavolanie db a pozretie nazvu takej kamery, ak existuje nevlozist a vratit false
-            #TODO ak neexistuje tak insert a vratit true a poslat spat na stranku
-
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            # print(db.getCamDetail(db,id))
-            self.wfile.write(bytes(db.getIfNameExists(db), "utf8"))
-
-
-        elif "addView" in self.path:
-            print("pridanie noveho nastavenia")
-            # TODO zavolanie db a pozretie nazvu takej kamery, ak existuje nevlozist a vratit false
-            # TODO ak neexistuje tak insert a vratit true a poslat spat na stranku
-        # elif self.path.endswith("/cams"):
-        # #     print("ina stranka")
-        #     self.send_page('addCamForm.html')
-        # elif self.path.endswith("/views"):
-        #     self.send_page('addViewForm.html')
-
-
-
-    def send_page(self,page):
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        # self.send_header("Content-Length", str(len(page)))
-        self.end_headers()
-        file = open(page)
-        self.wfile.write(bytes(file.read(),"utf8"))
 
 
 

@@ -6,29 +6,29 @@ import json
 import psycopg2
 from Model import view, snimka, kamera, JsonData,JsonModel
 
-connect_str = "dbname='Bc_new' user='postgres' host='localhost' " + \
+connect_str = "dbname='BC_new2' user='postgres' host='localhost' " + \
               "password='admin1234'"
 
 
 class Database(object):
 #listKamier je list kamier, ktory patri triede, z toho dovodu aby som nemusel robit dopyt do db kvoli zoznamu vsetkych kamier
 
-    def initDataFile(self):
-        data_imgs = []
-        data_cams = []
-        data_views = []
-        data_imgs.append(
-            {'id': '2', 'nazov': 'nazov', 'poznamka':'pozn', 'Vytvorena': '12:03:2012',
-             'kamera': 'kamera1', 'nastavenie': 'nastavenie'})
-
-        data_cams.append({'k_id': '3', 'k_nazov': 'kamera_nazov', 'k_typ': 'USB'})
-
-        data_views.append({'n_id': '4', 'n_nazov': 'nazov',
-                               'n_kamera_meno': 'kamera1'})
-
-        oData = JsonData.JsonData(data_cams, data_views, data_imgs)
-        print(json.dumps(oData.__dict__, default=self.myconverter))
-        return json.dumps(oData.__dict__, default=self.myconverter)
+    # def initDataFile(self):
+    #     data_imgs = []
+    #     data_cams = []
+    #     data_views = []
+    #     data_imgs.append(
+    #         {'id': '2', 'nazov': 'nazov', 'poznamka':'pozn', 'Vytvorena': '12:03:2012',
+    #          'kamera': 'kamera1', 'nastavenie': 'nastavenie'})
+    #
+    #     data_cams.append({'k_id': '3', 'k_nazov': 'kamera_nazov', 'k_typ': 'USB'})
+    #
+    #     data_views.append({'n_id': '4', 'n_nazov': 'nazov',
+    #                            'n_kamera_meno': 'kamera1'})
+    #
+    #     oData = JsonData.JsonData(data_cams, data_views, data_imgs)
+    #     print(json.dumps(oData.__dict__, default=self.myconverter))
+    #     return json.dumps(oData.__dict__, default=self.myconverter)
 
 
 
@@ -49,7 +49,7 @@ class Database(object):
             # print(len(rows))
             for r in rows:
                 # print(r[0])
-                list.append(snimka.Snimka(r[0], r[1], r[3], r[6], r[9],r[8]))
+                list.append(snimka.Snimka(r[0], r[1], r[3], r[6], r[9],r[8],r[5]))
 
 
             cursor.execute("select * from kamera")
@@ -64,42 +64,44 @@ class Database(object):
                 listNastaveni.append(view.View(r[0], r[1], r[2]))
 
             cursor.close()
+            data_imgs = []
+            data_cams = []
+            data_views = []
+            # data.append('snimka:')
+            for i in range(len(list)):
+                data_imgs.append({'id': list[i].id, 'nazov': list[i].nazov, 'poznamka': list[i].poznamka,
+                                  'Vytvorena': list[i].vytvorena, 'kamera': list[i].meno_kamery,
+                                  'nastavenie': list[i].meno_nastavenia,'previewUrl':'/moja%20prva%20USB%20kamera/moj%20motion/18032018_003821.png'})
+
+            listKamier = self.listKamier
+            # data.append('kamera:')
+            for i in range(len(listKamier)):
+                data_cams.append({'k_id': listKamier[i].id, 'k_nazov': listKamier[i].nazov, 'k_typ': listKamier[i].typ})
+
+            # data.append('nastavenie:')
+            for i in range(len(listNastaveni)):
+                data_views.append({'n_id': listNastaveni[i].id, 'n_nazov': listNastaveni[i].nazov,
+                                   'n_kamera_meno': listNastaveni[i].kamera_meno})
+
+            # data.__add__({'snimky':data_imgs})
+            # data.append({'snimky':data_imgs})
+            # data.append({'cams': data_cams})
+            # data.append({'views':data_views})
+
+            oData = JsonData.JsonData(data_cams, data_views, data_imgs)
+
+            # sdata = str(data)
+            # print(json.dumps(oData.__dict__,default=self.myconverter))
+            return json.dumps(oData.__dict__, default=self.myconverter)
         except Exception as e:
-                    print("Uh oh, can't connect. Invalid dbname, user or password?")
-                    print(e)
+            print("Uh oh, can't connect. Invalid dbname, user or password?")
+            print(e)
+            return None
 
         # for r in list:
         #     print(str(list[0].id))
         # print(list)
-        data_imgs = []
-        data_cams = []
-        data_views = []
-        # data.append('snimka:')
-        for i in range(len(list)):
-            data_imgs.append({'id':list[i].id,'nazov':list[i].nazov, 'poznamka':list[i].poznamka, 'Vytvorena':list[i].vytvorena,'kamera':list[i].meno_kamery,'nastavenie':list[i].meno_nastavenia})
 
-        listKamier=self.listKamier
-        # data.append('kamera:')
-        for i in range(len(listKamier)):
-            data_cams.append({'k_id': listKamier[i].id, 'k_nazov': listKamier[i].nazov, 'k_typ': listKamier[i].typ})
-
-
-        # data.append('nastavenie:')
-        for i in range(len(listNastaveni)):
-            data_views.append({'n_id': listNastaveni[i].id, 'n_nazov': listNastaveni[i].nazov, 'n_kamera_meno': listNastaveni[i].kamera_meno})
-
-        # data.__add__({'snimky':data_imgs})
-        # data.append({'snimky':data_imgs})
-        # data.append({'cams': data_cams})
-        # data.append({'views':data_views})
-
-        oData = JsonData.JsonData(data_cams,data_views,data_imgs)
-
-
-
-        # sdata = str(data)
-        print(json.dumps(oData.__dict__,default=self.myconverter))
-        return json.dumps(oData.__dict__,default=self.myconverter)
 
 
     #Ziskanie detailu snimky z kamery
@@ -195,4 +197,23 @@ class Database(object):
     def myconverter(o):
         if isinstance(o, datetime.datetime):
             return o.__str__()
+
+
+
+    def selectShotFromTable(self,url):
+        conn = psycopg2.connect(connect_str)
+        cursor = conn.cursor()
+        row = []
+        try:
+            cursor.execute(
+                "select cesta,poznamka,snimka_id,nazov,interval_mazania_fotky from snimka s JOIN view v ON s.view_id = v.view_id where url ='" + url+ "'")
+            # print("ok")
+            row = cursor.fetchone()
+            cursor.close()
+            return row
+        except Exception as e:
+                    print("Uh oh, can't connect. Invalid dbname, user or password?")
+                    print(e)
+                    cursor.close()
+
 

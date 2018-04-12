@@ -199,7 +199,6 @@
         <div id="previewModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    bla
                     <img id="imagePreview"
                          src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"
                          alt="preview">
@@ -463,7 +462,7 @@
                 }
             }
 
-            const API_URL = "http://127.0.0.1:8081";
+            const API_URL = "http://127.0.0.1:8081/browse";
             //const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons/initData.json";
             const POSTFIX_INIT = "initData";
             const POSTFIX_CAMERA = "KameraDetail";
@@ -580,18 +579,18 @@
             const show = {
 
                 shotDetail(index) {
-                    console.log("volam tuto " + data.shots[index].created)
+                    console.log("volam tuto " + data.shots[index].previewUrl)
                     document.getElementById("urltoFile").innerHTML = data.shots[index].previewUrl;
 
                 },
                 openDetail(index) {
                     const imageElement = document.getElementById("imagePreview");
                     const selectedImage = data.shots[index];
-                    console.log("otvaram img")
+                    console.log("otvaram img", imageElement)
                     if (!selectedImage) {
                         throw new Error("neplatná kamera s id: ", index);
                     }
-                    imageElement.setAttribute("src", selectedImage.previewUrl);
+                    imageElement.setAttribute("src", "/browse"+selectedImage.previewUrl);
                 },
                 cameraDetail(cameraId = "new", disabled) {
                     const buttonEdit = document.getElementById("cameraDetailEdit");
