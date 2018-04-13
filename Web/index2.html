@@ -16,7 +16,9 @@
         <!-- Bootstrap Date-Picker Plugin -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
-
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.3/combined/js/gijgo.min.js" type="text/javascript"></script>
+        <link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.3/combined/css/gijgo.min.css" rel="stylesheet" type="text/css" />
         <style>
             tr, label {
                 cursor: pointer;
@@ -66,34 +68,10 @@
                             <span class="glyphicon glyphicon-search form-control-feedback"></span>
                         </div>
 
-
                         <div class="container">
-                        <div class='col-md-5'>
-                            <div class="form-group">
-                                <div class='input-group date' id='datetimepicker6'>
-                                    <input type='text' class="form-control" />
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-                            </div>
+                            Start Date: <input id="startDate" width="276" />
+                            End Date: <input id="endDate" width="276" />
                         </div>
-                        <div class='col-md-5'>
-                            <div class="form-group">
-                                <div class='input-group date' id='datetimepicker7'>
-                                    <input type='text' class="form-control" />
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-
-
                     <!--</form>-->
                     <ul class="nav nav-tabs">
                         <li class="active">
@@ -195,13 +173,22 @@
             </div>
         </div>
 
-        <!-- Preview modal -->
+        <!-- Preview modal - zobrazenie snimky -->
         <div id="previewModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <img id="imagePreview"
                          src="https://static.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"
                          alt="preview">
+                </div>
+            </div>
+        </div>
+        <!-- zobrazenie obrazka z testu -->
+        <div id="testPreviewModal" class="modal fade" role="dialog" style="z-index: 10">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <img id="testPreview" src=""/>
+                    dghuognaduivbayubguigabgabgou
                 </div>
             </div>
         </div>
@@ -237,7 +224,13 @@
                                     <select class="form-control" id="usbList">
                                     </select>
                                 </div>
-                                <input type="button" class="btn btn-primary" onclick="getImageFromCam()" value="Test"/>
+
+                                <button type="button"
+                                class="btn btn-primary"
+                                onclick="show.getImageFromCam()"
+                                data-toggle="modal"
+                                data-target="#testPreviewModal">
+                                Test
                             </div>
 
                             <div id="ip">
@@ -577,6 +570,13 @@
             };
 
             const show = {
+
+                getImageFromCam() {
+                var e = document.getElementById("usbList");
+                var choice = e.option[e.selectedIndex].text;
+                console.log("volba" + choice);
+
+                },
 
                 shotDetail(index) {
                     console.log("volam tuto " + data.shots[index].previewUrl)
@@ -961,12 +961,24 @@
                 init.camera();
             });
 
-            function getImageFromCam() {
-                var e = document.getElementById("usbList");
-                var choice = e.option[e.selectedIndex].text;
-                console.log("volba" + choice);
 
+
+        var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+        $('#startDate').datepicker({
+            uiLibrary: 'bootstrap4',
+            iconsLibrary: 'fontawesome',
+            minDate: today,
+            maxDate: function () {
+                return $('#endDate').val();
             }
+        });
+        $('#endDate').datepicker({
+            uiLibrary: 'bootstrap4',
+            iconsLibrary: 'fontawesome',
+            minDate: function () {
+                return $('#startDate').val();
+            }
+        });
 
         </script>
     </body>

@@ -1,5 +1,5 @@
-// URL + getAllUSBCam
-// tymto sa mi naplni listobox pri pridavani novej usb kamery
 
-
-[{"name": "Lenovo EasyCamera: Lenovo EasyC", "desc": "0"}]
+[
+  {"name": "Lenovo EasyCamera: Lenovo EasyC", "desc": "0"},
+  {"name": "Lenovo EasyCamera: Nejaka ina", "desc": "1"}
+]

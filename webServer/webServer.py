@@ -15,8 +15,38 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
         if "/browse" in self.path:
             WebApi.browseApi(self)
 
-        elif(self.path.count('/') == 3):
+        elif self.path.count('/') == 3:
             WebApi.shotApi(self,self.path)
+
+        elif "/help" in self.path:
+            print("vraciam help")
+            return
+        elif "?" in self.path:
+            kamera = ""
+            view = ""
+            snimka = ""
+            fromDate = ""
+            toDate = ""
+            if "kamera" in self.path:
+                index = self.path.find("kamera")
+                end = self.path.find("&",index)
+                if end != -1:
+                    kamera=self.path[index+7:end]
+                else:
+                    kamera = self.path[index + 7:]
+                print("------->kamera", kamera)
+            if "view" in self.path:
+                index = self.path.find("view")
+                end = self.path.find("&", index)
+                if end != -1:
+                    view = self.path[index+5:end]
+                else :
+                    view = self.path[index + 5:]
+                print("--------->>> view", view)
+
+
+
+
 
         # page = self.create_page()
         # if self.path.endswith("/browse"):
