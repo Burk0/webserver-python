@@ -217,3 +217,8 @@ class Database(object):
                     cursor.close()
 
 
+    def getDataFromTable(self,camera,view,show,fromDate,toDate,last):
+        whereCondition = ""
+        if(camera is not None):
+            if camera is not "All":
+                whereCondition =

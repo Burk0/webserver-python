@@ -162,3 +162,5 @@ def parseParameters(handler,path):
         elif "last" in pole[i]:
             last = True
             print("---------->>>>Last:", last)
+
+        db = database.Database
