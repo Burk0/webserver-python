@@ -134,3 +134,31 @@ def shotApi(handler,path,browse=False):
             print("zmazanie snimky")
 
 
+def parseParameters(handler,path):
+    kamera = ""
+    view = ""
+    snimka = ""
+    fromDate = ""
+    toDate = ""
+    last = False
+    pole = path.split('&')
+    print(pole)
+    for i  in range(0,len(pole)):
+        if "camera" in pole[i]:
+            kamera = pole[i][6:]
+            print("->kamera:", kamera)
+        elif "view" in  pole[i]:
+            view = pole[i][5:]
+            print("--->view:", view)
+        elif "shot" in pole[i]:
+            snimka = pole[i][5:]
+            print("-----> snimka:",snimka)
+        elif "toDate" in pole[i]:
+            toDate = pole[i][7:]
+            print("-------> toDate:",toDate)
+        elif "fromDate" in pole[i]:
+            fromDate = pole[i][9:]
+            print("----------->>fromDate: ",fromDate)
+        elif "last" in pole[i]:
+            last = True
+            print("---------->>>>Last:", last)

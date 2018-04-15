@@ -4,13 +4,14 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from Database import database
 from Api import WebApi
+from urllib.request import urlretrieve
 from utils import SystemoveVolanie
 
 
 class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        print("ZACIATOK" + self.path)
+        # print("ZACIATOK" + self.path)
         # db = database.Database
         if "/browse" in self.path:
             WebApi.browseApi(self)
@@ -22,27 +23,9 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
             print("vraciam help")
             return
         elif "?" in self.path:
-            kamera = ""
-            view = ""
-            snimka = ""
-            fromDate = ""
-            toDate = ""
-            if "kamera" in self.path:
-                index = self.path.find("kamera")
-                end = self.path.find("&",index)
-                if end != -1:
-                    kamera=self.path[index+7:end]
-                else:
-                    kamera = self.path[index + 7:]
-                print("------->kamera", kamera)
-            if "view" in self.path:
-                index = self.path.find("view")
-                end = self.path.find("&", index)
-                if end != -1:
-                    view = self.path[index+5:end]
-                else :
-                    view = self.path[index + 5:]
-                print("--------->>> view", view)
+            WebApi.parseParameters(self,self.path)
+
+
 
 
 
