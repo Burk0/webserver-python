@@ -219,7 +219,7 @@
                             <div id="usb">
                                 <div class="form-group">
                                     <label for="usbList">Zoznam USB kamier:</label>
-                                    <select class="form-control" id="usbList">
+                                    <select class="form-control" id="usbList" name="usbList">
                                     </select>
                                 </div>
 
@@ -516,8 +516,8 @@
                 }
             }
 
-            const API_URL = "http://127.0.0.1:8081/browse";
-            // const API_URL = "http://10.1.254.214:8081/browse";
+            // const API_URL = "http://127.0.0.1:8081/browse";
+            const API_URL = "http://10.1.254.214:8081/browse";
             //const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons/initData.json";
             const POSTFIX_INIT = "initData";
             const POSTFIX_CAMERA = "KameraDetail";
@@ -527,6 +527,7 @@
             const POSTFIX_AddCam = "AddCam";
             const POSTFIX_AddView = "Addview";
             const POSTFIX_DEC_VIEW = "DelView";
+            const POSTFIX_TEST_CAM = "testCam";
 
             const elements = {
                 searchInput: document.getElementById("search"),
@@ -636,9 +637,13 @@
             const show = {
 
                 getImageFromCam() {
-                var e = document.getElementById("usbList");
-                var choice = e.option[e.selectedIndex].text;
-                console.log("volba" + choice);
+                // var e = document.getElementById("usbList");
+                // var choice = e.option[e.selectedIndex].text;
+                // console.log("volba" + choice);
+                const cameraData = $("#cameraDetailForm").serialize();
+                $.getJSON(API_URL + "/" + POSTFIX_TEST_CAM,cameraData, (result) => {
+                       
+                    });
 
                 },
 
@@ -666,7 +671,7 @@
                     const inputCamera = document.getElementById("acc_name");
                     const inputPassword = document.getElementById("acc_pass");
                     const inputIpAddress = document.getElementById("id_adrss");
-                    const inputCameraType = document.getElementById("cam");
+                    const inputCameraType = document.getElementById("usbDesc");
 
                     const camera = data.cameras[cameraId];
 
@@ -1018,17 +1023,6 @@
             // ak sa načíta dokument tak za zavolajú všetky inicializačné metódy
             $(function () {
                 elements.searchInput.value = utils.getParameterByName("search");
-
-                <!--$('#datetimepicker6').datetimepicker();-->
-                <!--$('#datetimepicker7').datetimepicker({-->
-                    <!--useCurrent: false //Important! See issue #1075-->
-                <!--});-->
-                <!--$("#datetimepicker6").on("dp.change", function (e) {-->
-                    <!--$('#datetimepicker7').data("DateTimePicker").minDate(e.date);-->
-                <!--});-->
-                <!--$("#datetimepicker7").on("dp.change", function (e) {-->
-                    <!--$('#datetimepicker6').data("DateTimePicker").maxDate(e.date);-->
-                <!--});-->
 
                 init.main();
                 init.view();
