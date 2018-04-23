@@ -6,7 +6,7 @@ import json
 import psycopg2
 from Model import view, snimka, kamera, JsonData,JsonModel
 
-connect_str = "dbname='BC_new2' user='postgres' host='localhost' " + \
+connect_str = "dbname='BC_new' user='postgres' host='localhost' " + \
               "password='admin1234'"
 
 
@@ -43,7 +43,7 @@ class Database(object):
         listNastaveni=[]
 
         try:
-            cursor.execute("select s.*,v.view_meno,k.kamera_meno from snimka s JOIN view v on V.view_id = S.view_id JOIN kamera k ON k.kamera_id = v.kamera_id")
+            cursor.execute("select s.*,v.view_meno,k.kamera_meno from snimka s JOIN nastavenie v on V.view_id = S.view_id JOIN kamera k ON k.kamera_id = v.kamera_id")
             # print("ok")
             rows = cursor.fetchall()
             # print(len(rows))
@@ -58,7 +58,7 @@ class Database(object):
                 self.listKamier.append(kamera.Kamera(r[0], r[1], r[2]))
 
 
-            cursor.execute("select v.view_id,v.view_meno,k.kamera_meno from view v left join kamera k ON k.kamera_id = v.kamera_id")
+            cursor.execute("select v.view_id,v.view_meno,k.kamera_meno from nastavenie v left join kamera k ON k.kamera_id = v.kamera_id")
             rows=cursor.fetchall()
             for r in rows:
                 listNastaveni.append(view.View(r[0], r[1], r[2]))
@@ -162,7 +162,7 @@ class Database(object):
         row = []
         try:
             cursor.execute(
-                "select * from view where view_id ='"+str(id)+"'")
+                "select * from nastavenie where view_id ='"+str(id)+"'")
             # print("ok")
             row = cursor.fetchone()
         except Exception as e:
@@ -206,7 +206,7 @@ class Database(object):
         row = []
         try:
             cursor.execute(
-                "select cesta,poznamka,snimka_id,nazov,interval_mazania_fotky from snimka s JOIN view v ON s.view_id = v.view_id where url ='" + url+ "'")
+                "select cesta,poznamka,snimka_id,nazov,interval_mazania_fotky from snimka s JOIN nastavenie v ON s.view_id = v.view_id where url ='" + url+ "'")
             # print("ok")
             row = cursor.fetchone()
             cursor.close()
@@ -218,7 +218,41 @@ class Database(object):
 
 
     def getDataFromTable(self,camera,view,show,fromDate,toDate,last):
+        conn = psycopg2.connect(connect_str)
+        cursor = conn.cursor()
+        rows = []
         whereCondition = ""
         if(camera is not None):
-            if camera is not "All":
-                whereCondition =
+            if camera is "All":
+                try:
+                    cursor.execute(
+                        "select kamera_meno from kamera")
+                    rows = cursor.fetchall()
+                    cursor.close()
+                    return rows
+                except Exception as e:
+                    print("zly select v metode getDataFromTable")
+                    print(e)
+                    cursor.close()
+
+            else:
+                if view is None:
+                    try:
+                        cursor.execute(
+                            "select view_meno from nastavenie v JOIN kamera k ON k.kamera_id = v.kamera_id where kamera_meno = '"+ str(camera).replace("%20"," ")+"'")
+                        rows = cursor.fetchall()
+                        cursor.close()
+                        return rows
+                    except Exception as e:
+                        print("zly select v metode getDataFromTable")
+                        print(e)
+                        cursor.close()
+                # if view is "All":
+                #     select
+                #     s.nazov
+                #     from kamera k, view
+                #     v, snimka
+                #     s
+                #     where
+                #     k.kamera_meno = 'moja tretia IP kamera' and v.view_meno = 'moj motion'
+

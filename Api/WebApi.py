@@ -1,8 +1,10 @@
 from utils import SystemoveVolanie
 from Database import database
+import urllib
 
 def browseApi(handler):
     print("hehe "+handler.path)
+
     db = database.Database
     if "" == handler.path[7:]:
         handler.send_response(200)
@@ -19,6 +21,8 @@ def browseApi(handler):
         print("tu som"  + handler.path)
         handler.send_response(200)
         handler.send_header('Content-Type', 'application/json')
+        handler.send_header('Access-Control-Allow-Origin', '*')
+
         handler.end_headers()
         # print(json_string)
         # return db.getInitData(db)
@@ -31,6 +35,7 @@ def browseApi(handler):
 
         handler.send_response(200)
         handler.send_header('Content-Type', 'application/json')
+        handler.send_header('Access-Control-Allow-Origin', '*')
         handler.end_headers()
         # print(json_string)
         # return db.getInitData(db)
@@ -59,6 +64,7 @@ def browseApi(handler):
         print("vracima vsetky USBcamery")
         handler.send_response(200)
         handler.send_header('Content-Type', 'application/json')
+        handler.send_header('Access-Control-Allow-Origin', '*')
         handler.end_headers()
         # print(db.getCamDetail(db,id))
         # wfile.write(bytes(SystemoveVolanie.getAllUsbCam(), "utf8"))
@@ -67,20 +73,22 @@ def browseApi(handler):
 
 
 
-    elif "addCam" in handler.path:
+    elif "AddCam" in handler.path:
         print("pridanie novej kamery")
         #TODO zavolanie db a pozretie nazvu takej kamery, ak existuje nevlozit a vratit false
         #TODO ak neexistuje tak insert a vratit true a poslat spat na stranku
-
+        params = urllib.parse.parse_qs(handler.path[15:])
+        print("params",params.get("actualId"))
         # print(db.getCamDetail(db,id))
         # wfile.write(bytes(db.getIfNameExists(db), "utf8"))
-        return db.getIfNameExists(db)
+        # return db.getIfNameExists(db)
 
 
-    elif "addView" in handler.path:
+    elif "AddView" in handler.path:
         print("pridanie noveho nastavenia")
         # TODO zavolanie db a pozretie nazvu takej kamery, ak existuje nevlozist a vratit false
         # TODO ak neexistuje tak insert a vratit true a poslat spat na stranku
+        print(urllib.parse.parse_qs(handler.path[15:]))
     # elif path.endswith("/cams"):
     # #     print("ina stranka")
     #     send_page('addCamForm.html')
@@ -146,7 +154,7 @@ def parseParameters(handler,path):
     for i  in range(0,len(pole)):
         if "camera" in pole[i]:
             kamera = pole[i][6:]
-            print("->kamera:", kamera)
+            print("->kamera:", str(kamera).replace("%20"," "))
         elif "view" in  pole[i]:
             view = pole[i][5:]
             print("--->view:", view)

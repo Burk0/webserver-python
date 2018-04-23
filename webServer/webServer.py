@@ -11,6 +11,10 @@ from utils import SystemoveVolanie
 class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
     def do_GET(self):
+        # self.send_response(200)
+        # self.send_header('Access-Control-Allow-Origin', '*')
+        # self.end_headers()
+
         # print("ZACIATOK" + self.path)
         # db = database.Database
         if "/browse" in self.path:
@@ -39,6 +43,7 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
     def do_POST(self):
         print("POST:"+self.path)
+        # print(self.path)
         # if self.path.endswith("/browse"):
         #     print(self.path)
         #     self.send_response(200)
@@ -78,7 +83,7 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
 
 def run():
     print('starting server...')
-    server_address = ('127.0.0.1', 8081)
+    server_address = ('0.0.0.0', 8081)
     httpd = HTTPServer(server_address,testHTTPServer_RequestHanlder)
     print('running server...')
     httpd.serve_forever()
