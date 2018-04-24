@@ -283,7 +283,7 @@
 
                     <!-- Modal body -->
                     <div class="modal-body">
-                        <form action="#">
+                        <form action="#" id="viewDetailForm">
                             <div class="form-group">
                                 <label for="selectedCameraToOption">Kamera:</label>
                                 <select class="js-example-basic-single"
@@ -300,8 +300,14 @@
 
                             <div class="form-group">
                                 <label for="intervalmezdiFotkami">Interval medzi fotkami:</label>
-                                <input type="time" class="form-control" id="intervalmezdiFotkami"step="1">
+                                <input type="time" 
+                                class="form-control" 
+                                id="intervalmezdiFotkami" 
+                                name = "intervalmezdiFotkami" 
+                                step="1">
                             </div>
+
+
                             <div class="form-group">
                                 <label for="novaFotkaprichybeInterval">Interval opakovania pri chybe</label>
 
@@ -309,6 +315,7 @@
                                        class="form-control"
                                        title="Nová kamera"
                                        id="novaFotkaprichybeInterval"
+                                       name="novaFotkaprichybeInterval"
                                        step="1">
 
                                 <label for="novaFotkaprichybePokusy">Počet opakovani pri cbybe</label>
@@ -316,7 +323,7 @@
                                    class="form-control"
                                    title="Nová kamera"
                                    id="novaFotkaprichybePokusy"
-                                   
+                                   name="novaFotkaprichybePokusy"
                                    min="1">
                             </div>
 
@@ -329,7 +336,7 @@
                                        class="form-control"
                                        title="Zmazať fotku číslo"
                                        id="zmazfotkuC"
-                                       
+                                       name="zmazfotkuC"
                                        min="1">
                             </div>
 
@@ -341,14 +348,13 @@
                                        class="form-control"
                                        title="Režim"
                                        id="rezimOd"
-                                       name = "rezimOd"
-                                       >
+                                       name = "rezimOd">
 
                                        <input type="time"
                                        class="form-control"
                                        title="Režim"
                                        id="rezimDo"
-                                       name="rezimDo>
+                                       name="rezimDo">
                             </div>
 
                             <div class="form-group">
@@ -365,7 +371,7 @@
 
                             <div class="form-group">
                                 <label for="original">Uložit aj originál(bez filtrov):</label>
-                                <!--##TODO 2 timery sem dat -->
+                               
                                 <input type="checkbox"
                                        id="greyscale"
                                        class="form-check-input"
@@ -377,27 +383,29 @@
 
                             <div class="form-group">
                                 <label for="biela">Akceptovať bielu snímku v %</label>
-                                <!--##TODO 2 timery sem dat -->
+                                
                                
 
                                 <input type="text"
                                        class="form-control"
-                                       title="Režim"
+                                       title="biela"
                                        id="biela"
                                        value="0"
-                                       min="1">
+                                       min="1"
+                                       name="biela">
                             </div>
 
                             <div class="form-group">
                                 <label for="cierna">Akceptovať čiernu snímku v %</label>
-                                <!--##TODO 2 timery sem dat -->
+                              
 
                                 <input type="text"
                                        class="form-control"
-                                       title="Režim"
+                                       title="cierna"
                                        id="cierna"
                                        value="0"
-                                       min="1">
+                                       min="1",
+                                       name="cierna">
                             </div>
 
                             <div class="form-group">
@@ -424,12 +432,19 @@
                                 </select>
                             </div>
 
+                            <input type="hidden" name="actualId" id="actualOptionId">
                             <input type="button"
                                    value="Upraviť"
                                    class="btn btn-primary hidden"
                                    onclick="show.viewDetail(null, false)"
                                    id="viewDetailEdit"/>
-                            <input type="button" value="Uložiť" class="btn btn-primary hidden" id="viewDetailSubmit"/>
+
+                                <input type="button"
+                                   value="Uložiť"
+                                   onclick="handlers.viewSave()"
+                                   class="btn btn-primary hidden"
+                                   id="viewDetailSubmit"/>
+                            
                         </form>
                     </div>
 
@@ -615,6 +630,30 @@
                     else {
                         $.post()
                     }
+                },
+
+
+                viewSave() {
+                    
+                    const inputActualCameraId = document.getElementById("actualOptionId");
+                    const viewData = $("#viewDetailForm").serialize();
+                    console.log("viewData: ", viewData);
+                    if (inputActualCameraId.value === "new") {
+                        console.log("viewSAVE");
+                        $.getJSON(API_URL + "/" + POSTFIX_AddView, viewData, (result) => {
+                            console.log(result[0].return)
+                            if (result.return) {
+                                $("#closeCameraDetailButton").click();
+                            }
+                            else {
+                                var element = document.getElementById("cameraNameDiv");
+                                element.classList.add("has-error");
+                                element.classList.add("has-feedback");
+
+                            }
+                        });
+                    }
+
                 }
             };
 
@@ -733,7 +772,10 @@
                 viewDetail(optionId = "new", disabled) {
                     const buttonEdit = document.getElementById("viewDetailEdit");
                     const buttonSubmit = document.getElementById("viewDetailSubmit");
+                    
+                    const inputActualOptionId = document.getElementById("actualOptionId");
 
+                    //TODO
                     const inputOptionCamera = document.getElementById("selectedCameraToOption");
                     const inputOptionName = document.getElementById("optionName");
                     const inputOptionMotionDetect = document.getElementById("prz_motionDetect");
@@ -752,7 +794,7 @@
                     buttonEdit.classList.toggle("hidden", !disabled);
                     buttonSubmit.classList.toggle("hidden", disabled);
 
-                    // vytvára sa nová kamera
+                    // vytvára sa nove nastavenie 
                     if (optionId === "new") {
                         utils.setAndDisable(inputOptionCamera, "", disabled);
                         utils.setAndDisable(inputOptionName, "", disabled);
@@ -764,6 +806,7 @@
                         utils.setAndDisable(inputDeletePhotoValue, "", disabled);
                         utils.setAndDisable(inputActiveTime, "", disabled);
                         utils.setAndDisable(inputActiveTimeValue, "", disabled);
+                        utils.setAndDisable(inputActualOptionId, "new", disabled);
                     }
                     // iba sa mení disablovanie inputov
                     else if (typeof optionId === "object"){
@@ -777,6 +820,7 @@
                         utils.setAndDisable(inputDeletePhotoValue, inputDeletePhotoValue.value, disabled);
                         utils.setAndDisable(inputActiveTime, inputActiveTime.checked, disabled);
                         utils.setAndDisable(inputActiveTimeValue, inputActiveTimeValue.value, disabled);
+                        utils.setAndDisable(inputActualOptionId, inputActualOptionId.value, disabled);
                     }
                     // zobrazuje sa detail
                     else {
@@ -792,6 +836,7 @@
                             utils.setAndDisable(inputDeletePhotoValue, Option.deleteInterval, disabled);
                             utils.setAndDisable(inputActiveTime, Option.timeFrom || Option.timeTo, disabled);
                             utils.setAndDisable(inputActiveTimeValue, [Option.timeFrom, Option.timeTo].join(" - "), disabled);
+                            utils.setAndDisable(inputActualOptionId, viewDetail.value, disabled);
                         });
                     }
                 },
@@ -850,6 +895,7 @@
                 },
                 view() {
                     $("#addViewSubmit").click(function () {
+                        
                         $.post("URL/addView", JSON.stringify( $("form").serialize()), function (response) {
                             console.log("response: ", response);
                         })
@@ -861,6 +907,7 @@
                     const usbElement = document.getElementById("usb");
 
                     $("#cameraDetailSubmit").click(function () {
+                        console.log("volaaaaaaaaaaaaaaam");
                         $.post(API_URL + "/addCam", JSON.strigify($("form").serialize()), function (response) {
                             console.log("response: ", response);
                         })
