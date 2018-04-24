@@ -181,15 +181,16 @@
                 </div>
             </div>
         </div>
+
         <!-- zobrazenie obrazka z testu -->
-        <div id="testPreviewModal" class="modal fade" role="dialog" style="z-index: 10">
+        <!-- <div id="testPreviewModal" class="modal fade" role="dialog" style="z-index: 10">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <img id="testPreview" src=""/>
                     dghuognaduivbayubguigabgabgou
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- Camera detail form modal -->
         <div class="modal fade" id="detailCamForm">
@@ -226,8 +227,8 @@
                                 <button type="button"
                                 class="btn btn-primary"
                                 onclick="show.getImageFromCam()"
-                                data-toggle="modal"
-                                data-target="#testPreviewModal">
+                                data-toggle="modal" >
+                                <!-- data-target="#testPreviewModal"> -->
                                 Test
                             </div>
 
@@ -299,24 +300,23 @@
 
                             <div class="form-group">
                                 <label for="intervalmezdiFotkami">Interval medzi fotkami:</label>
-                                <input type="number" class="form-control" id="intervalmezdiFotkami" value="0" min="1">
+                                <input type="time" class="form-control" id="intervalmezdiFotkami"step="1">
                             </div>
                             <div class="form-group">
                                 <label for="novaFotkaprichybeInterval">Interval opakovania pri chybe</label>
 
-                                <input type="number"
+                                <input type="time"
                                        class="form-control"
                                        title="Nová kamera"
                                        id="novaFotkaprichybeInterval"
-                                       value="0"
-                                       min="1">
+                                       step="1">
 
                                 <label for="novaFotkaprichybePokusy">Počet opakovani pri cbybe</label>
                                 <input type="number"
                                    class="form-control"
                                    title="Nová kamera"
                                    id="novaFotkaprichybePokusy"
-                                   value="0"
+                                   
                                    min="1">
                             </div>
 
@@ -324,30 +324,31 @@
                                 <label for="zmazfotkuC">Mazanie fotky staršej ako:</label>
                                
 
-                                <input type="number"
+                                <input type="date"
+                                       width="276"
                                        class="form-control"
                                        title="Zmazať fotku číslo"
                                        id="zmazfotkuC"
-                                       value="0"
+                                       
                                        min="1">
                             </div>
 
                             <div class="form-group">
                                 <label for="prz_rezim">Aplikovat toto nastavenie len v urcitych hodinach:</label>
                                 <!--##TODO 2 timery sem dat -->
-                                <input type="checkbox"
-                                       id="prz_rezim"
-                                       class="form-check-input"
-                                       onchange="utils.disableInput('rezim', this.checked)"
-                                       name="prz_rezim"
-                                       value="prz_rezim">
 
-                                <input type="text"
+                                <input type="time"
                                        class="form-control"
                                        title="Režim"
-                                       id="rezim"
-                                       value="0"
-                                       min="1">
+                                       id="rezimOd"
+                                       name = "rezimOd"
+                                       >
+
+                                       <input type="time"
+                                       class="form-control"
+                                       title="Režim"
+                                       id="rezimDo"
+                                       name="rezimDo>
                             </div>
 
                             <div class="form-group">
@@ -641,9 +642,10 @@
                 // var choice = e.option[e.selectedIndex].text;
                 // console.log("volba" + choice);
                 const cameraData = $("#cameraDetailForm").serialize();
-                $.getJSON(API_URL + "/" + POSTFIX_TEST_CAM,cameraData, (result) => {
+                window.open(API_URL + "/" + POSTFIX_TEST_CAM +cameraData);
+                // $.getJSON(API_URL + "/" + POSTFIX_TEST_CAM,cameraData, (result) => {
                        
-                    });
+                //     });
 
                 },
 
@@ -1031,7 +1033,7 @@
 
 
 
-        var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+        //var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
         $('#startDate').datepicker({
             uiLibrary: 'bootstrap4',
             iconsLibrary: 'fontawesome',
@@ -1048,6 +1050,12 @@
             minDate: function () {
                 return $('#startDate').val();
             }
+        });
+        $('#delDate').datepicker({
+            uiLibrary: 'bootstrap4',
+            format: 'mm.dd.yyyy',
+            iconsLibrary: 'fontawesome',
+           
         });
 
         </script>
