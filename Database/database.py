@@ -71,7 +71,7 @@ class Database(object):
             for i in range(len(list)):
                 data_imgs.append({'id': list[i].id, 'nazov': list[i].nazov, 'poznamka': list[i].poznamka,
                                   'Vytvorena': list[i].vytvorena, 'kamera': list[i].meno_kamery,
-                                  'nastavenie': list[i].meno_nastavenia,'previewUrl':'/moja%20prva%20USB%20kamera/moj%20motion/18032018_003821.png'})
+                                  'nastavenie': list[i].meno_nastavenia,'previewUrl':list[i].url})
 
             listKamier = self.listKamier
             # data.append('kamera:')
@@ -206,53 +206,127 @@ class Database(object):
         row = []
         try:
             cursor.execute(
-                "select cesta,poznamka,snimka_id,nazov,interval_mazania_fotky from snimka s JOIN nastavenie v ON s.view_id = v.view_id where url ='" + url+ "'")
+                "select cesta,poznamka,snimka_id,nazov from snimka s JOIN nastavenie v ON s.view_id = v.view_id where url ='" + url+ "'")
             # print("ok")
             row = cursor.fetchone()
             cursor.close()
             return row
         except Exception as e:
-                    print("Uh oh, can't connect. Invalid dbname, user or password?")
+                    print("selectShotFromTable:")
                     print(e)
                     cursor.close()
 
 
-    def getDataFromTable(self,camera,view,show,fromDate,toDate,last):
+    def getCam(self,urlList):
+
         conn = psycopg2.connect(connect_str)
         cursor = conn.cursor()
-        rows = []
-        whereCondition = ""
-        if(camera is not None):
-            if camera is "All":
-                try:
-                    cursor.execute(
-                        "select kamera_meno from kamera")
-                    rows = cursor.fetchall()
-                    cursor.close()
-                    return rows
-                except Exception as e:
-                    print("zly select v metode getDataFromTable")
-                    print(e)
-                    cursor.close()
+        row = []
+        if urlList:
+            querry = "select url from kamera k join nastavenie n on k.kamera_id= n.kamera_id join snimka s ON s.view_id =n.view_id where url !='null'"
+        else:
+            querry = "select kamera_meno from kamera"
+        try:
+            cursor.execute(
+                querry)
+            # print("ok")
+            row = cursor.fetchall()
+            cursor.close()
 
+            odata = JsonModel.JsonModel(row)
+            print("vypis", json.dumps({"zoznam": odata}, default=self.myconverter))
+            return json.dumps({"zoznam": odata}, default=self.myconverter)
+        except Exception as e:
+            print("selectShotFromTable:")
+            print(e)
+            cursor.close()
+
+
+    def getView(self,urlList,kamera):
+        conn = psycopg2.connect(connect_str)
+        cursor = conn.cursor()
+        row = []
+        if urlList:
+            querry = "select url from kamera k join nastavenie n on k.kamera_id= n.kamera_id join snimka s ON s.view_id =n.view_id where url !='null' and " \
+                     "k.kamera_meno = '"+str(kamera)+"'"
+        else:
+            querry = "select view_meno from kamera k join nastavenie n on k.kamera_id= n.kamera_id where kamera_meno = '"+str(kamera)+"'"
+        try:
+            cursor.execute(
+                querry)
+            # print("ok")
+            row = cursor.fetchall()
+            cursor.close()
+            odata = JsonModel.JsonModel(row)
+            print("vypis", json.dumps({"zoznam": odata}, default=self.myconverter))
+            return json.dumps({"zoznam": odata}, default=self.myconverter)
+        except Exception as e:
+            print("selectShotFromTable:")
+            print(e)
+            cursor.close()
+
+
+
+    def getShots(self,kamera,nastavenie,urlList,first,last,dateFrom,dateTo):
+
+        print("====",dateTo)
+        conn = psycopg2.connect(connect_str)
+        cursor = conn.cursor()
+        row = []
+        where = ""
+        limit = ""
+        if first:
+            limit = "order by vytvorena limit 1"
+        elif last :
+            limit = "order by vytvorena DESC limit 1"
+
+        if dateFrom :
+            print("tutu")
+            if  dateTo:
+                where = " and vytvorena >='" +str(dateFrom) + "' and vytvorena <='"+str(dateTo)+ "'"
             else:
-                if view is None:
-                    try:
-                        cursor.execute(
-                            "select view_meno from nastavenie v JOIN kamera k ON k.kamera_id = v.kamera_id where kamera_meno = '"+ str(camera).replace("%20"," ")+"'")
-                        rows = cursor.fetchall()
-                        cursor.close()
-                        return rows
-                    except Exception as e:
-                        print("zly select v metode getDataFromTable")
-                        print(e)
-                        cursor.close()
-                # if view is "All":
-                #     select
-                #     s.nazov
-                #     from kamera k, view
-                #     v, snimka
-                #     s
-                #     where
-                #     k.kamera_meno = 'moja tretia IP kamera' and v.view_meno = 'moj motion'
+                where = " and vytvorena >='" + str(dateFrom) + "'"
+        elif  dateTo:
+            where = " and vytvorena <='"+str(dateTo)+ "'"
+        if urlList:
+            querry = "select url from kamera k join nastavenie n on k.kamera_id= n.kamera_id join snimka s ON s.view_id =n.view_id where url !='null' and " \
+                     "k.kamera_meno = '" + str(kamera) + "' and n.view_meno='"+str(nastavenie)+ "'"
+        else:
+            querry = "select s.nazov from kamera k join nastavenie n on k.kamera_id= n.kamera_id join snimka s ON s.view_id =n.view_id where url !='null' and " \
+                     "k.kamera_meno = '" + str(kamera) + "' and n.view_meno='"+str(nastavenie)+ "'"
+        try:
+            cursor.execute(
+                querry + where + limit)
+            # print("ok")
+            row = cursor.fetchall()
+            cursor.close()
+            odata = JsonModel.JsonModel(row)
+            print("vypis", json.dumps({"zoznam": odata}, default=self.myconverter))
+            return json.dumps({"zoznam": odata}, default=self.myconverter)
+        except Exception as e:
+            print("database.getShots:")
+            print(e)
+            cursor.close()
+
+
+
+    def getShot(self,kamera, nastavenie,date):
+        print("date: ",date)
+        conn = psycopg2.connect(connect_str)
+        cursor = conn.cursor()
+        # row = []
+
+        try:
+            cursor.execute("select cesta,nazov from snimka where url != 'null' ORDER BY abs(extract(epoch from (vytvorena - timestamp '"+str(date)+"'))) limit 1")
+            # print("ok")
+            row = cursor.fetchone()
+            cursor.close()
+            print("vypis", row)
+            return row
+
+        except Exception as e:
+            print("getView:")
+            print(e)
+            cursor.close()
+
 

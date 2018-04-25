@@ -1,6 +1,11 @@
-from utils import SystemoveVolanie
+import json
+from _ast import UAdd
+
+from Model import JsonModel
+from utils import Utils
 from Database import database
 import urllib
+from io import BytesIO
 
 def browseApi(handler):
     print("hehe "+handler.path)
@@ -69,7 +74,7 @@ def browseApi(handler):
         # print(db.getCamDetail(db,id))
         # wfile.write(bytes(SystemoveVolanie.getAllUsbCam(), "utf8"))
         # return SystemoveVolanie.getAllUsbCam()
-        handler.wfile.write(bytes(SystemoveVolanie.getAllUsbCam(), "utf8"))
+        handler.wfile.write(bytes(Utils.getAllUsbCam(), "utf8"))
 
 
 
@@ -99,6 +104,36 @@ def browseApi(handler):
         print("sem som sa dostal")
         shotApi(handler,handler.path[7:],True)
 
+    elif "/testCam" in handler.path:
+        print("TestCam")
+
+        params = urllib.parse.parse_qs(handler.path[16:])
+        usbdesc = params.get("usbList").pop(0)
+        file = Utils.getTestCam(usbdesc)
+        handler.send_response(200)
+        if file is not None:
+            print("_____________________")
+            handler.send_header('Content-type', 'image/jpeg')
+            handler.send_header('Access-Control-Allow-Origin', '*')
+            handler.end_headers()
+            handler.wfile.write(file.read())
+            file.close()
+        else :
+            handler.send_header('Content-type', 'text/html')
+            handler.send_header('Access-Control-Allow-Origin', '*')
+            handler.end_headers()
+            handler.wfile.write(bytes("chyba", "utf8"))
+        # print(db.getCamDetail(db,id))
+        # wfile.write(bytes(SystemoveVolanie.getAllUsbCam(), "utf8"))
+        # return SystemoveVolanie.getAllUsbCam()
+        # file = open("/home/buranskyd/BC/moja prva USB kamera/moj motion4/22-04-18" + '/' + "22042018_181424.png", 'rb')
+        # file=open('test.png','rb')
+        # vratim mu ju
+
+
+        # file.close()
+
+
 
 
 def shotApi(handler,path,browse=False):
@@ -115,7 +150,7 @@ def shotApi(handler,path,browse=False):
         # a poslem tu spravu o tom
         handler.wfile.write(bytes(message, "utf8"))
     else:
-        cesta,pozn,snimka_id,snimka,zmaz = row
+        cesta,pozn,snimka_id,snimka = row
         #mam taku snimku a je v pohode
         if(pozn=="Ok"):
             print("poznamka je ok")
@@ -138,37 +173,115 @@ def shotApi(handler,path,browse=False):
             # poslem mu srpavu ze snimka bola zla
             handler.wfile.write(bytes(pozn, "utf8"))
 
-        if(browse is False and zmaz is None):
-            print("zmazanie snimky")
+
+def parseParameters(handler):
 
 
-def parseParameters(handler,path):
-    kamera = ""
-    view = ""
-    snimka = ""
-    fromDate = ""
-    toDate = ""
+
+    db = database.Database
+    params = urllib.parse.parse_qs(handler.path[2:])
+    akcia = ""
+    first = False
     last = False
-    pole = path.split('&')
-    print(pole)
-    for i  in range(0,len(pole)):
-        if "camera" in pole[i]:
-            kamera = pole[i][6:]
-            print("->kamera:", str(kamera).replace("%20"," "))
-        elif "view" in  pole[i]:
-            view = pole[i][5:]
-            print("--->view:", view)
-        elif "shot" in pole[i]:
-            snimka = pole[i][5:]
-            print("-----> snimka:",snimka)
-        elif "toDate" in pole[i]:
-            toDate = pole[i][7:]
-            print("-------> toDate:",toDate)
-        elif "fromDate" in pole[i]:
-            fromDate = pole[i][9:]
-            print("----------->>fromDate: ",fromDate)
-        elif "last" in pole[i]:
-            last = True
-            print("---------->>>>Last:", last)
+    dateFrom = ""
+    dateTo = ""
+    urlList = False
+    # print(params)
 
-        db = database.Database
+    if params.get("first") is not None :
+        first = True
+    if params.get("last") is not None :
+        last = True
+    if params.get("dateFrom") is not None :
+        dateFrom = params.get("dateFrom").pop(0)
+    if params.get("dateTo") is not None :
+        dateTo = params.get("dateTo").pop(0)
+    if params.get("urlList") is not None :
+        urlList = True
+    if params.get("action") is not None :
+        akcia = params.get("action").pop(0)
+    if akcia == "getCam":
+        print("getCamaaaa")
+        handler.send_response(200)
+        handler.send_header('Content-Type', 'application/json')
+        handler.send_header('Access-Control-Allow-Origin', '*')
+        handler.end_headers()
+
+        handler.wfile.write(bytes(db.getCam(db,urlList), "utf8"))
+    elif akcia == "getView":
+        if params.get("camera"):
+            kamera =params.get("camera").pop(0)
+
+            handler.send_response(200)
+            handler.send_header('Content-Type', 'application/json')
+            handler.send_header('Access-Control-Allow-Origin', '*')
+            handler.end_headers()
+
+            handler.wfile.write(bytes(db.getView(db,urlList,kamera), "utf8"))
+
+    elif akcia == "getShots":
+        if params.get("camera"):
+            kamera =params.get("camera").pop(0)
+            if params.get("view"):
+                nastavenie = params.get("view").pop(0)
+
+                handler.send_response(200)
+                handler.send_header('Content-Type', 'application/json')
+                handler.send_header('Access-Control-Allow-Origin', '*')
+                handler.end_headers()
+
+                handler.wfile.write(bytes(db.getShots(db,kamera,nastavenie,urlList,first,last,dateFrom,dateTo), "utf8"))
+
+
+    elif akcia == "getShot":
+        if params.get("camera"):
+            kamera = params.get("camera").pop(0)
+            if params.get("view"):
+                nastavenie = params.get("view").pop(0)
+                if params.get("date"):
+                    date = params.get("date").pop(0)
+                    print(date)
+                    ret = db.getShot(db, kamera, nastavenie, date)
+                    if ret is None:
+                        handler.send_response(200)
+                        handler.send_header('Content-Type', 'application/json')
+                        data = []
+                        data.append({'error': 'nenasla sa ziadna snimka'})
+                        odata = JsonModel.JsonModel(data)
+                        print("vypis", json.dumps({"zoznam": odata}))
+                        return json.dumps({"zoznam": odata})
+                        # a poslem tu spravu o tom
+                        handler.wfile.write(bytes(message, "utf8"))
+
+                    else:
+                        cesta,snimka = ret
+                        handler.send_response(200)
+                        handler.send_header('Content-type', 'image/jpeg')
+                        handler.end_headers()
+                        file = open(cesta+'/'+snimka, 'rb')
+                        # file=open('test.png','rb')
+                        # vratim mu ju
+                        handler.wfile.write(file.read())
+                        file.close()
+
+                    # handler.send_response(200)
+                    # handler.send_header('Content-type', 'image/jpeg')
+                    # handler.send_header('Access-Control-Allow-Origin', '*')
+                    # handler.end_headers()
+                    #
+                    # handler.wfile.write(
+                    #     bytes(db.getShot(db, kamera, nastavenie,date), "utf8"))
+
+
+
+
+
+
+
+    print(akcia)
+    print(urlList)
+
+
+
+
+    # handler.wfile.write(bytes(db.getViewDetail(db, id), "utf8"))

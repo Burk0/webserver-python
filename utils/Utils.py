@@ -1,6 +1,8 @@
 import json
 import subprocess
-
+import cv2
+from io import BytesIO
+import os
 
 
 def getAllUsbCam():
@@ -17,3 +19,17 @@ def getAllUsbCam():
 
     # print (json.dumps(data))
     return json.dumps(data)
+
+
+def getTestCam(id):
+    cap = cv2.VideoCapture(int(id))
+    if cap.isOpened() is True:
+        ret,frame = cap.read()
+        if ret == True:
+            cv2.imwrite("tmp.jpg",frame)
+            file = open("tmp.jpg" ,'rb')
+            os.remove("tmp.jpg")
+            return file
+
+
+

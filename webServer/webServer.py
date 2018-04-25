@@ -5,7 +5,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from Database import database
 from Api import WebApi
 from urllib.request import urlretrieve
-from utils import SystemoveVolanie
+from utils import Utils
 
 
 class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
@@ -27,7 +27,8 @@ class testHTTPServer_RequestHanlder(BaseHTTPRequestHandler):
             print("vraciam help")
             return
         elif "?" in self.path:
-            WebApi.parseParameters(self,self.path)
+            print("parametre")
+            WebApi.parseParameters(self)
 
 
 
