@@ -289,7 +289,7 @@
                                 <select class="js-example-basic-single"
                                         id="selectedCameraToOption"
                                         style="width: 100%"
-                                        name="state"></select>
+                                        name="selectedCameraToOption"></select>
                             </div>
                             <div class="form-group">
                                 <label for="optionName">Nazov nastavenia:</label>
@@ -328,20 +328,32 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="zmazfotkuC">Mazanie fotky staršej ako:</label>
+                                <label for="zmazfotkuStarsiu">Mazanie fotky staršej ako:</label>
                                
 
                                 <input type="date"
                                        width="276"
                                        class="form-control"
                                        title="Zmazať fotku číslo"
-                                       id="zmazfotkuC"
-                                       name="zmazfotkuC"
+                                       id="zmazfotkuStarsiu"
+                                       name="zmazfotkuStarsiu"
                                        min="1">
                             </div>
 
                             <div class="form-group">
-                                <label for="prz_rezim">Aplikovat toto nastavenie len v urcitych hodinach:</label>
+                                <label for="zmazfotkuPocet">Ponechať počet snímok na serveri</label>
+                               
+
+                                <input type="number"
+                                class="form-control"
+                                title="Nová kamera"
+                                id="novaFotkaprichybePokusy"
+                                name="novaFotkaprichybePokusy"
+                                min="1">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="rezimOd">Aplikovat toto nastavenie len v urcitych hodinach:</label>
                                 <!--##TODO 2 timery sem dat -->
 
                                 <input type="time"
@@ -365,7 +377,7 @@
                                        class="form-check-input"
                                        onchange="utils.disableInput('rezim', this.checked)"
                                        name="greyscale"
-                                       value="greyscale">
+                                       >
 
                             </div>
 
@@ -373,11 +385,11 @@
                                 <label for="original">Uložit aj originál(bez filtrov):</label>
                                
                                 <input type="checkbox"
-                                       id="greyscale"
+                                       id="original"
                                        class="form-check-input"
                                        onchange="utils.disableInput('rezim', this.checked)"
                                        name="original"
-                                       value="original">
+                                       >
 
                             </div>
 
@@ -774,18 +786,27 @@
                     const buttonSubmit = document.getElementById("viewDetailSubmit");
                     
                     const inputActualOptionId = document.getElementById("actualOptionId");
-
-                    //TODO
                     const inputOptionCamera = document.getElementById("selectedCameraToOption");
                     const inputOptionName = document.getElementById("optionName");
-                    // const inputOptionMotionDetect = document.getElementById("prz_motionDetect");
-                    const inputOptionMotionDetectDelay = document.getElementById("intervalmezdiFotkami");
-                    // const inputPhotoOnMove = document.getElementById("prz_novafotka");
-                    // const inputPhotoOnMoveValue = document.getElementById("novaFotkaprichybe");
-                    // const inputDeletePhoto = document.getElementById("prz_zmaz");
-                    const inputDeletePhotoValue = document.getElementById("zmazfotkuC");
-                    // const inputActiveTime = document.getElementById("prz_rezim");
-                    // const inputActiveTimeValue = document.getElementById("rezim");
+                    
+                    const inputOptionIntervalShot = document.getElementById("intervalmezdiFotkami");
+                    const inputOptionIntervalError = document.getElementById("novaFotkaprichybeInterval");
+                    const inputOptionTryErrro = document.getElementById("novaFotkaprichybePokusy");
+
+                    const inputOptionOlderDel = document.getElementById("zmazfotkuStarsiu");
+                    const inputOptionCountDel = document.getElementById("zmazfotkuPocet");
+                    const inputOptionRezimFrom = document.getElementById("rezimOd");
+                    const inputOptionRezimTo = document.getElementById("rezimTo");
+
+                    const inputOptiongreyscale = document.getElementById("greyscale");
+
+                    const inputOptionoriginal = document.getElementById("original");
+                    const inputOptionWhite = document.getElementById("biela");
+                    const inputOptionBlack = document.getElementById("cierna");
+                    const inputOptionJas = document.getElementById("Jas");
+                    const inputOptionTimeOnShot = document.getElementById("casNaSnimku");
+
+                   
 
                     const Option = data.views[optionId];
 
@@ -796,36 +817,48 @@
 
                     // vytvára sa nove nastavenie 
                     if (optionId === "new") {
+                        utils.setAndDisable(inputActualOptionId, "new", disabled);
                         utils.setAndDisable(inputOptionCamera, "", disabled);
                         utils.setAndDisable(inputOptionName, "", disabled);
-                        // utils.setAndDisable(inputOptionMotionDetect, "", disabled);
-                        // utils.setAndDisable(inputOptionMotionDetectDelay, "", disabled);
-                        // utils.setAndDisable(inputPhotoOnMove, "", disabled);
-                        // utils.setAndDisable(inputPhotoOnMoveValue, "", disabled);
-                        // utils.setAndDisable(inputDeletePhoto, "", disabled);
-                        // utils.setAndDisable(inputDeletePhotoValue, "", disabled);
-                        // utils.setAndDisable(inputActiveTime, "", disabled);
-                        // utils.setAndDisable(inputActiveTimeValue, "", disabled);
-                        utils.setAndDisable(inputActualOptionId, "new", disabled);
+                        utils.setAndDisable(inputOptionIntervalShot,"",disabled);
+                        utils.setAndDisable(inputOptionIntervalError,"",disabled);
+                        utils.setAndDisable(inputOptionTryErrro,"",disabled);
+                        utils.setAndDisable(inputOptionOlderDel,"",disabled);
+                        utils.setAndDisable(inputOptionCountDel,"",disabled);
+                        utils.setAndDisable(inputOptionRezimFrom,"",disabled);
+                        utils.setAndDisable(inputOptionRezimTo,"",disabled);
+                        utils.setAndDisable(inputOptiongreyscale,"",disabled);
+                        utils.setAndDisable(inputOptionoriginal,"",disabled);
+                        utils.setAndDisable(inputOptionWhite,"",disabled);
+                        utils.setAndDisable(inputOptionBlack,"",disabled);
+                        utils.setAndDisable(inputOptionJas,"",disabled);
+                        utils.setAndDisable(inputOptionTimeOnShot,"",disabled);
+                        
                     }
                     // iba sa mení disablovanie inputov
                     else if (typeof optionId === "object"){
+                        utils.setAndDisable(inputActualOptionId, inputActualOptionId.value, disabled);
                         utils.setAndDisable(inputOptionCamera, inputOptionCamera.value, disabled);
                         utils.setAndDisable(inputOptionName, inputOptionName.value, disabled);
-                        utils.setAndDisable(inputOptionMotionDetect, inputOptionMotionDetect.checked, disabled);
-                        utils.setAndDisable(inputOptionMotionDetectDelay, inputOptionMotionDetectDelay.value, disabled);
-                        utils.setAndDisable(inputPhotoOnMove, inputPhotoOnMove.checked, disabled);
-                        utils.setAndDisable(inputPhotoOnMoveValue, inputPhotoOnMoveValue.value, disabled);
-                        utils.setAndDisable(inputDeletePhoto, inputDeletePhoto.checked, disabled);
-                        utils.setAndDisable(inputDeletePhotoValue, inputDeletePhotoValue.value, disabled);
-                        utils.setAndDisable(inputActiveTime, inputActiveTime.checked, disabled);
-                        utils.setAndDisable(inputActiveTimeValue, inputActiveTimeValue.value, disabled);
-                        utils.setAndDisable(inputActualOptionId, inputActualOptionId.value, disabled);
+                        utils.setAndDisable(inputOptionIntervalShot,inputOptionIntervalShot.value,disabled);
+                        utils.setAndDisable(inputOptionIntervalError,inputOptionIntervalError.value,disabled);
+                        utils.setAndDisable(inputOptionTryErrro,inputOptionTryErrro.value,disabled);
+                        utils.setAndDisable(inputOptionOlderDel,inputOptionOlderDel.value,disabled);
+                        utils.setAndDisable(inputOptionCountDel,inputOptionCountDel.value,disabled);
+                        utils.setAndDisable(inputOptionRezimFrom, inputOptionRezimFrom.value,disabled);
+                        utils.setAndDisable(inputOptionRezimTo, inputOptionRezimTo.value,disabled);
+                        utils.setAndDisable(inputOptiongreyscale, inputOptiongreyscale.value,disabled);
+                        utils.setAndDisable(inputOptionoriginal,inputOptionoriginal.value,disabled);
+                        utils.setAndDisable(inputOptionWhite,inputOptionWhite.value,disabled);
+                        utils.setAndDisable(inputOptionBlack,inputOptionBlack.value,disabled);
+                        utils.setAndDisable(inputOptionJas,inputOptionJas.value,disabled);
+                        utils.setAndDisable(inputOptionTimeOnShot,inputOptionTimeOnShot.value,disabled);
                     }
                     // zobrazuje sa detail
                     else {
                         $.getJSON(API_URL + "/" + POSTFIX_VIEW + "/" + Option.id, (Option) => {
                             Option = View.parse(Option[0]);
+                            //TODO
                             utils.setAndDisable(inputOptionCamera, Option.camera.id, disabled);
                             utils.setAndDisable(inputOptionName, Option.name, disabled);
                             utils.setAndDisable(inputOptionMotionDetect, !!Option.photoInterval, disabled);
