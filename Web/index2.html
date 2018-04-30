@@ -50,6 +50,14 @@
                 width: 100%;
                 height: 100%;
             }
+
+            .cameraError {
+                display: none;
+                color: red;
+            }
+            .has-error .cameraError {
+                display: block;
+            }
         </style>
     </head>
     <body>
@@ -209,10 +217,12 @@
                             <div class="form-group" id="cameraNameDiv">
                                 <label for="cameraName">Nazov kamery:</label>
                                 <input type="text" class="form-control" id="cameraName" name="cameraName">
-                                <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+                                <span class="glyphicon form-control-feedback"></span>
+                                <span class="cameraError">Zadaný názov kamery už existuje</span>
                             </div>
                             <label for="cam">Typ kamery:</label>
-                            <select id="cam" title="Typ kamery" class="form-control">
+                            <select id="cam" title="Typ kamery" class="form-control" name="cameraType">
+                                <option value="" disabled>Vyberte typ kamery</option>
                                 <option value="USB">USB Kamera</option>
                                 <option value="IP">IP Kamera</option>
                             </select>
@@ -223,13 +233,6 @@
                                     <select class="form-control" id="usbList" name="usbList">
                                     </select>
                                 </div>
-
-                                <button type="button"
-                                class="btn btn-primary"
-                                onclick="show.getImageFromCam()"
-                                data-toggle="modal" >
-                                <!-- data-target="#testPreviewModal"> -->
-                                Test
                             </div>
 
                             <div id="ip">
@@ -246,6 +249,17 @@
                                     <input type="text" class="form-control" name="id_adrss" id="id_adrss"/>
                                 </div>
                                 <!--<input type="button" value="Test" />-->
+                            </div>
+                            
+                            <div class="form-group">
+                                <button type="button"
+                                id="testButton"
+                                class="btn btn-primary"
+                                onclick="show.getImageFromCam()"
+                                data-toggle="modal" >
+                                <!-- data-target="#testPreviewModal"> -->
+                                Test
+                                </button>
                             </div>
                             <input type="hidden" name="actualId" id="actualCameraId">
                             <input type="button"
@@ -341,7 +355,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="zmazfotkuPocet">Ponechať počet snímok na serveri</label>
+                                <label for="novaFotkaprichybePokusy">Ponechať počet snímok na serveri</label>
                                
 
                                 <input type="number"
@@ -544,8 +558,8 @@
                 }
             }
 
-            const API_URL = "http://127.0.0.1:8081/browse";
-            // const API_URL = "http://10.1.254.214:8081/browse";
+            // const API_URL = "http://127.0.0.1:8081/browse";
+            const API_URL = "http://10.1.254.214:8081/browse";
             //const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons/initData.json";
             const POSTFIX_INIT = "initData";
             const POSTFIX_CAMERA = "KameraDetail";
@@ -553,7 +567,7 @@
             const POSTFIX_VIEW = "ViewDetail";
             const POSTFIX_USB_CAM = "UsbCams";
             const POSTFIX_AddCam = "AddCam";
-            const POSTFIX_AddView = "Addview";
+            const POSTFIX_AddView = "AddView";
             const POSTFIX_DEC_VIEW = "DelView";
             const POSTFIX_TEST_CAM = "testCam";
 
@@ -628,19 +642,26 @@
                         //TODO
                         $.getJSON(API_URL + "/" + POSTFIX_AddCam, cameraData, (result) => {
                             console.log(result[0].return)
-                            if (result.return) {
-                                $("#closeCameraDetailButton").click();
-                            }
-                            else {
-                                var element = document.getElementById("cameraNameDiv");
+                            if (result[0].return === "false") {
+                                const element = document.getElementById("cameraNameDiv");
                                 element.classList.add("has-error");
                                 element.classList.add("has-feedback");
-
+                            }
+                            else {
+                                data.cameras.push(new Camera(result[0].return.actualId[0],
+                                                             result[0].return.cameraName[0],
+                                                             result[0].return.acc_name[0],//LOGIN
+                                                             result[0].return.acc_pass[0],
+                                                             result[0].return.id_adrss[0],
+                                                             result[0].return.cameraType[0],
+                                                             result[0].return.id_adrss[0]));
+                                set.cameras();
+                                $("#closeCameraDetailButton").click();
                             }
                         });
                     }
                     else {
-                        $.post()
+                        // TODO toto sa volá pri update kamery
                     }
                 },
 
@@ -648,22 +669,26 @@
                 viewSave() {
                     
                     const inputActualCameraId = document.getElementById("actualOptionId");
-                    const viewData = $("#viewDetailForm").serialize();
+                    const viewDataArray = $("#viewDetailForm").serializeArray();
+                    const viewData = viewDataArray.map(e => e.name + "=" + e.value).join("&");
                     console.log("viewData: ", viewData);
                     if (inputActualCameraId.value === "new") {
                         console.log("viewSAVE");
                         $.getJSON(API_URL + "/" + POSTFIX_AddView, viewData, (result) => {
                             console.log(result[0].return)
-                            if (result.return) {
-                                $("#closeCameraDetailButton").click();
-                            }
-                            else {
-                                var element = document.getElementById("cameraNameDiv");
+                            if (result[0].return === "false") {
+                                const element = document.getElementById("cameraNameDiv");
                                 element.classList.add("has-error");
                                 element.classList.add("has-feedback");
+                            }
+                            else {
+                                $("#closeCameraDetailButton").click();
 
                             }
                         });
+                    }
+                    else {
+                        // TODO update
                     }
 
                 }
@@ -687,12 +712,12 @@
             };
 
             const show = {
-
                 getImageFromCam() {
                 // var e = document.getElementById("usbList");
                 // var choice = e.option[e.selectedIndex].text;
                 // console.log("volba" + choice);
                 const cameraData = $("#cameraDetailForm").serialize();
+                console.log("cameraData:", cameraData);
                 window.open(API_URL + "/" + POSTFIX_TEST_CAM +cameraData);
                 // $.getJSON(API_URL + "/" + POSTFIX_TEST_CAM,cameraData, (result) => {
                        
@@ -715,6 +740,7 @@
                     imageElement.setAttribute("src", "/browse"+selectedImage.previewUrl);
                 },
                 cameraDetail(cameraId = "new", disabled) {
+                    $(".has-error").removeClass("has-error");
                     const buttonEdit = document.getElementById("cameraDetailEdit");
                     const buttonSubmit = document.getElementById("cameraDetailSubmit");
 
@@ -724,8 +750,8 @@
                     const inputCamera = document.getElementById("acc_name");
                     const inputPassword = document.getElementById("acc_pass");
                     const inputIpAddress = document.getElementById("id_adrss");
-                    const inputCameraType = document.getElementById("usbDesc");
-
+                    const inputCameraType = document.getElementById("cam");
+                    console.log("inputCameraType: ", inputCameraType);
                     const camera = data.cameras[cameraId];
 
                     $.getJSON(API_URL + "/" + POSTFIX_USB_CAM, (result) => {
@@ -766,20 +792,24 @@
                     // zobrazuje sa detail
                     else {
                         $.getJSON(API_URL + "/" + POSTFIX_CAMERA + "/" + camera.id , (cameraDetail) =>{
-                            console.log("Po response "+ cameraDetail.prihlasovacie_meno)
                             cameraDetail = Camera.parse(cameraDetail);
+                            console.log("Po response ", cameraDetail.type)
                             utils.setAndDisable(inputCamera, cameraDetail.login, disabled);
                             utils.setAndDisable(inputPassword, cameraDetail.password, disabled);
                             utils.setAndDisable(inputIpAddress, cameraDetail.ip, disabled);
                             utils.setAndDisable(inputCameraType, cameraDetail.type, disabled);
                             utils.setAndDisable(inputActualCameraId, cameraDetail.value, disabled);
                             utils.setAndDisable(inputCameraName, cameraDetail.name, disabled);
+                            document.getElementById("cam").onchange({
+                                target: document.getElementById("cam"),
+                            });
+                            document.getElementById("testButton").classList.add("hidden");
                         });
                     }
-
                     document.getElementById("cam").onchange({
                         target: document.getElementById("cam"),
                     });
+                    document.getElementById("testButton").classList.remove("hidden");
                 },
                 viewDetail(optionId = "new", disabled) {
                     const buttonEdit = document.getElementById("viewDetailEdit");
@@ -794,7 +824,7 @@
                     const inputOptionTryErrro = document.getElementById("novaFotkaprichybePokusy");
 
                     const inputOptionOlderDel = document.getElementById("zmazfotkuStarsiu");
-                    const inputOptionCountDel = document.getElementById("zmazfotkuPocet");
+                    const inputOptionCountDel = document.getElementById("novaFotkaprichybePokusy");
                     const inputOptionRezimFrom = document.getElementById("rezimOd");
                     const inputOptionRezimTo = document.getElementById("rezimTo");
 
@@ -938,18 +968,30 @@
                     const camElement = document.getElementById("cam");
                     const ipElement = document.getElementById("ip");
                     const usbElement = document.getElementById("usb");
-
+                    /*
                     $("#cameraDetailSubmit").click(function () {
                         console.log("volaaaaaaaaaaaaaaam");
                         $.post(API_URL + "/addCam", JSON.strigify($("form").serialize()), function (response) {
                             console.log("response: ", response);
                         })
                     });
+                    */
 
                     function onChangeCameraType() {
-                        const value = camElement.options[camElement.selectedIndex].value === "USB";
-                        ipElement.classList.toggle("hidden", !value);
-                        usbElement.classList.toggle("hidden", value);
+                            const value = camElement.options[camElement.selectedIndex].value;
+                            ipElement.classList.add("hidden");
+                            usbElement.classList.add("hidden");
+                            console.log("typ kamery: ", value);
+                            switch (value) {
+                                case "IP": 
+                                    ipElement.classList.remove("hidden");
+                                    break;
+                                case "USB": 
+                                    usbElement.classList.remove("hidden");
+                                    break;
+                                default:
+                                    alert("neplatný typ kamery: " + value);
+                            }
                     }
 
                     camElement.onchange = onChangeCameraType;
