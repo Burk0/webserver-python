@@ -658,7 +658,7 @@
                         //     }
 
                         //TODO
-                        $.getJSON(API_URL + "/" + POSTFIX_AddCam , cameraData, (result) => {
+                        $.get(API_URL + "/" + POSTFIX_AddCam , cameraData, (result) => {
                             console.log(result.return)
                             if (result.return === "false") {
                                 const element = document.getElementById("cameraNameDiv");
@@ -739,10 +739,12 @@
 
             const remove = {
                 camera(index) {
+                    $.getJSON(API_URL + "/" + POSTFIX_DEL_CAM + "/" + data.cameras[index].id, (result) => {})
                     data.cameras.splice(index, 1);
                     set.cameras();
                 },
                 option(index) {
+                    $.getJSON(API_URL + "/" + POSTFIX_DEL_VIEW + "/" + data.views[index].id, (result) => {})
                     data.views.splice(index, 1);
                     set.options();
 
@@ -842,7 +844,7 @@
                             utils.setAndDisable(inputPassword, cameraDetail.password, disabled);
                             utils.setAndDisable(inputIpAddress, cameraDetail.ip, disabled);
                             utils.setAndDisable(inputCameraType, cameraDetail.type, disabled);
-                            utils.setAndDisable(inputActualCameraId, cameraDetail.value, disabled);
+                            utils.setAndDisable(inputActualCameraId, cameraId, disabled);
                             utils.setAndDisable(inputCameraName, cameraDetail.name, disabled);
                             document.getElementById("cam").onchange({
                                 target: document.getElementById("cam"),
@@ -956,9 +958,7 @@
                             utils.setAndDisable(inputOptionJas,Option.brightness,disabled);
                             utils.setAndDisable(inputOptionTimeOnShot,Option.pridaj_cas_na_fotku,disabled);
 
-
-                          
-                            utils.setAndDisable(inputActualOptionId, viewDetail.value, disabled);
+                            utils.setAndDisable(inputActualOptionId, Option.id, disabled);
                         });
                     }
                 },
@@ -1162,7 +1162,7 @@
                             shot.camera.name.toLowerCase().indexOf(searchKey) < 0 )
                             ||
                             ((!isNaN(startDate.getTime()) && startDate.getTime() >= shotCreated.getTime()) ||
-                             (!isNaN(endDate.getTime()) && endDate.getTime() <= shotCreated.getTime()))) {
+                             (!isNaN(endDate.getTime()) && endDate.getTime() <= shotCreated.getTime()))) { 
                             return;
                         }
                         count++;
