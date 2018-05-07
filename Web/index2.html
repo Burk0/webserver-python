@@ -63,11 +63,12 @@
     <body>
         <div class="container">
             <div class="row">
-                
+
             </div>
             <div class="row">
                 <div class="col-md-4 col-md-offset-3">
                     <!--<form action="" class="search-form">-->
+                    <h1>Kamerový systém</h1>
                         <div class="form-group has-feedback">
                             <label for="search" class="sr-only">Hľadať</label>
                             <input type="text" class="form-control" name="search" id="search" placeholder="Hľadať">
@@ -250,7 +251,7 @@
                                 </div>
                                 <!--<input type="button" value="Test" />-->
                             </div>
-                            
+
                             <div class="form-group">
                                 <button type="button"
                                 id="testButton"
@@ -310,27 +311,38 @@
                                 <input type="text" class="form-control" id="optionName" name="optionName">
                             </div>
 
-                            
 
-                            <div class="form-group">
-                                <label for="intervalmezdiFotkami">Interval medzi fotkami:</label>
-                                <input type="time" 
-                                class="form-control" 
-                                id="intervalmezdiFotkami" 
-                                name = "intervalmezdiFotkami" 
+                             <div class="form-group">
+                                <label for="prvaIteracia">Zacat prvu iteraciu:</label>
+                                <input type="Time"
+                                class="form-control"
+                                id="prvaIteracia"
+                                name = "prvaIteracia"
                                 step="1">
                             </div>
 
 
                             <div class="form-group">
-                                <label for="novaFotkaprichybeInterval">Interval opakovania pri chybe</label>
+                                <label for="intervalmezdiFotkami">Interval medzi fotkami(v sekundách):</label>
+                                <input type="number"
+                                class="form-control"
+                                id="intervalmezdiFotkami"
+                                name = "intervalmezdiFotkami"
+                                step="1"
+                                value=-1>
+                            </div>
 
-                                <input type="time"
+
+                            <div class="form-group">
+                                <label for="novaFotkaprichybeInterval">Interval opakovania pri chybe(v sekundách):</label>
+
+                                <input type="number"
                                        class="form-control"
                                        title="Nová kamera"
                                        id="novaFotkaprichybeInterval"
                                        name="novaFotkaprichybeInterval"
-                                       step="1">
+                                       step="1"
+                                       value=-1>
 
                                 <label for="novaFotkaprichybePokusy">Počet opakovani pri cbybe</label>
                                 <input type="number"
@@ -341,28 +353,16 @@
                                    min="1">
                             </div>
 
-                            <div class="form-group">
-                                <label for="zmazfotkuStarsiu">Mazanie fotky staršej ako:</label>
-                               
-
-                                <input type="date"
-                                       width="276"
-                                       class="form-control"
-                                       title="Zmazať fotku číslo"
-                                       id="zmazfotkuStarsiu"
-                                       name="zmazfotkuStarsiu"
-                                       min="1">
-                            </div>
 
                             <div class="form-group">
-                                <label for="novaFotkaprichybePokusy">Ponechať počet snímok na serveri</label>
-                               
+                                <label for="pocetSnimokPonechanych">Ponechať počet snímok na serveri</label>
+
 
                                 <input type="number"
                                 class="form-control"
                                 title="Nová kamera"
-                                id="novaFotkaprichybePokusy"
-                                name="novaFotkaprichybePokusy"
+                                id="pocetSnimokPonechanych"
+                                name="pocetSnimokPonechanych"
                                 min="1">
                             </div>
 
@@ -389,7 +389,6 @@
                                 <input type="checkbox"
                                        id="greyscale"
                                        class="form-check-input"
-                                       onchange="utils.disableInput('rezim', this.checked)"
                                        name="greyscale"
                                        >
 
@@ -397,11 +396,10 @@
 
                             <div class="form-group">
                                 <label for="original">Uložit aj originál(bez filtrov):</label>
-                               
+
                                 <input type="checkbox"
                                        id="original"
                                        class="form-check-input"
-                                       onchange="utils.disableInput('rezim', this.checked)"
                                        name="original"
                                        >
 
@@ -409,8 +407,8 @@
 
                             <div class="form-group">
                                 <label for="biela">Akceptovať bielu snímku v %</label>
-                                
-                               
+
+
 
                                 <input type="text"
                                        class="form-control"
@@ -423,7 +421,7 @@
 
                             <div class="form-group">
                                 <label for="cierna">Akceptovať čiernu snímku v %</label>
-                              
+
 
                                 <input type="text"
                                        class="form-control"
@@ -436,7 +434,7 @@
 
                             <div class="form-group">
                                 <label for="Jas">Jas:</label>
-                                
+
                                 <select name = "Jas">
                                     <option value=""></option>
                                     <option value="1">ľavy horny roh</option>
@@ -447,9 +445,9 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="prz_rezim">Pridať čas spravenia snímky na snímku:</label>
-                                
-                                <select name = "casNaSnimku">
+                                <label for="casNaSnimku">Pridať čas spravenia snímky na snímku:</label>
+
+                                <select name = "casNaSnimku" id = "casNaSnimku">
                                     <option value=""></option>
                                     <option value="1">ľavy horny roh</option>
                                     <option value="2">pravy horny roh</option>
@@ -470,7 +468,7 @@
                                    onclick="handlers.viewSave()"
                                    class="btn btn-primary hidden"
                                    id="viewDetailSubmit"/>
-                            
+
                         </form>
                     </div>
 
@@ -507,32 +505,47 @@
                 }
             }
             class View {
-                constructor(id, name, greyscale, photoInterval, deleteInterval, timeFrom, timeTo, camera, motionDetection, photoIntervalWithError) {
-                    this.greyscale = greyscale;
-                    this.timeTo = timeTo;
-                    this.id = id;
-                    this.photoInterval = photoInterval;
-                    this.deleteInterval = deleteInterval;
-                    this.timeFrom = timeFrom;
-                    this.camera = camera;
-                    this.motionDetection = motionDetection;
-                    this.photoIntervalWithError = photoIntervalWithError;
-                    this.name = name;
+                constructor(id,meno,interval_medzi_fotkami,interval_opakovania_pri_chybe,pocet_opakovanie_pri_chybe,pocet_snimok_ponechanych,cas_od,cas_do, biela_snimka, cierna_snimka,
+                    greyscale, brightness, original, pridaj_cas_na_fotku,zacat_prvu_iteraciu,camera) {
+                    
+                    this.id= id;
+                    this.name = meno;
+                    this.interval_medzi_fotkami=interval_medzi_fotkami;
+                    this.interval_opakovania_pri_chybe=interval_opakovania_pri_chybe;
+                    this.pocet_opakovanie_pri_chybe=pocet_opakovanie_pri_chybe;
+                    this.pocet_snimok_ponechanych=pocet_snimok_ponechanych;
+                    this.cas_od=cas_od;
+                    this.cas_do=cas_do;
+                    this.biela_snimka=biela_snimka;
+                    this.cierna_snimka=cierna_snimka;
+                    this.greyscale=greyscale; 
+                    this.brightness=brightness;
+                    this.original=original;
+                    this.pridaj_cas_na_fotku=pridaj_cas_na_fotku;
+                    this.camera=camera;
+                    
+                    
                 }
 
                 static parse(view) {
                     return new View(
                         view.id || view.n_id,
                         view.meno || view.n_nazov,
-                        view.greyscale,
                         view.interval_medzi_fotkami,
-                        view.interval_mazania_fotky,
+                        view.interval_opakovania_pri_chybe,
+                        view.pocet_opakovanie_pri_chybe,
+                        view.pocet_snimok_ponechanych,
                         view.cas_od,
                         view.cas_do,
-                        new Camera(view.id_kamera, view.n_kamera_meno || "unknown camera name"),
-                        view.prz_motion_detektor,
-                        view.nova_fotka_pri_chybe,
-                    )
+                        view.biela_snimka,
+                        view.cierna_snimka,
+                        view.greyscale,
+                        view.brightness,
+                        view.original,
+                        view.pridaj_cas_na_fotku,
+                        view.zacat_prvu_iteraciu,
+                        new Camera(view.kamera_id, view.n_kamera_meno || "unknown camera name"),
+                    );
                 }
             }
             class Shot {
@@ -558,8 +571,8 @@
                 }
             }
 
-            // const API_URL = "http://127.0.0.1:8081/browse";
-            const API_URL = "http://10.1.254.214:8081/browse";
+            const API_URL = "http://127.0.0.1:8081/browse";
+            <!--const API_URL = "http://10.1.254.214:8081/browse";-->
             //const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons/initData.json";
             const POSTFIX_INIT = "initData";
             const POSTFIX_CAMERA = "KameraDetail";
@@ -568,8 +581,12 @@
             const POSTFIX_USB_CAM = "UsbCams";
             const POSTFIX_AddCam = "AddCam";
             const POSTFIX_AddView = "AddView";
-            const POSTFIX_DEC_VIEW = "DelView";
+            const POSTFIX_DEL_VIEW = "DelView";
+            const POSTFIX_DEL_CAM = "DelCam";
             const POSTFIX_TEST_CAM = "testCam";
+            const POSTFIX_DEL_SHOT = "DelShot";
+            const POSTFIX_EDIT_VIEW = "EditView";
+            const POSTFIX_EDIT_CAM = "EditCam";
 
             const elements = {
                 searchInput: document.getElementById("search"),
@@ -640,34 +657,57 @@
                         //     }
 
                         //TODO
-                        $.getJSON(API_URL + "/" + POSTFIX_AddCam, cameraData, (result) => {
-                            console.log(result[0].return)
-                            if (result[0].return === "false") {
+                        $.getJSON(API_URL + "/" + POSTFIX_AddCam , cameraData, (result) => {
+                            console.log(result.return)
+                            if (result.return === "false") {
                                 const element = document.getElementById("cameraNameDiv");
                                 element.classList.add("has-error");
                                 element.classList.add("has-feedback");
                             }
                             else {
-                                data.cameras.push(new Camera(result[0].return.actualId[0],
-                                                             result[0].return.cameraName[0],
-                                                             result[0].return.acc_name[0],//LOGIN
-                                                             result[0].return.acc_pass[0],
-                                                             result[0].return.id_adrss[0],
-                                                             result[0].return.cameraType[0],
-                                                             result[0].return.id_adrss[0]));
-                                set.cameras();
+                                window.location.href = API_URL;
+                                // data.cameras.push(new Camera(result[0].return.actualId[0],
+                                //                              result[0].return.cameraName[0],
+                                //                              result[0].return.acc_name[0],//LOGIN
+                                //                              result[0].return.acc_pass[0],
+                                //                              result[0].return.id_adrss[0],
+                                //                              result[0].return.cameraType[0],
+                                //                              result[0].return.id_adrss[0]));
+                                // set.cameras();
                                 $("#closeCameraDetailButton").click();
                             }
                         });
                     }
                     else {
                         // TODO toto sa volá pri update kamery
+                        
+                        $.getJSON(API_URL + "/" + POSTFIX_EDIT_CAM + "/" +inputActualCameraId.value, cameraData, (result) => {
+                            console.log(result.return)
+                            if (result.return === "false") {
+                                const element = document.getElementById("cameraNameDiv");
+                                element.classList.add("has-error");
+                                element.classList.add("has-feedback");
+                            }
+                            else {
+                                window.location.href = API_URL;
+                                // data.cameras.push(new Camera(result[0].return.actualId[0],
+                                //                              result[0].return.cameraName[0],
+                                //                              result[0].return.acc_name[0],//LOGIN
+                                //                              result[0].return.acc_pass[0],
+                                //                              result[0].return.id_adrss[0],
+                                //                              result[0].return.cameraType[0],
+                                //                              result[0].return.id_adrss[0]));
+                                // set.cameras();
+                                $("#closeCameraDetailButton").click();
+                            }
+                        });
+
                     }
                 },
 
 
                 viewSave() {
-                    
+
                     const inputActualCameraId = document.getElementById("actualOptionId");
                     const viewDataArray = $("#viewDetailForm").serializeArray();
                     const viewData = viewDataArray.map(e => {
@@ -677,8 +717,8 @@
                     if (inputActualCameraId.value === "new") {
                         console.log("viewSAVE");
                         $.getJSON(API_URL + "/" + POSTFIX_AddView, viewData, (result) => {
-                            console.log(result[0].return)
-                            if (result[0].return === "false") {
+                            console.log(result.return)
+                            if (result.return === "false") {
                                 const element = document.getElementById("cameraNameDiv");
                                 element.classList.add("has-error");
                                 element.classList.add("has-feedback");
@@ -707,6 +747,7 @@
 
                 },
                 shot(index) {
+                    $.getJSON(API_URL + "/" + POSTFIX_DEL_SHOT + "/" + index, (result) => {})
                     data.shots.splice(index, 1);
                     set.shots();
                     // $("#tableShotsContent").find("tr:nth-child(" + index + ")").remove();
@@ -722,7 +763,7 @@
                 console.log("cameraData:", cameraData);
                 window.open(API_URL + "/" + POSTFIX_TEST_CAM +cameraData);
                 // $.getJSON(API_URL + "/" + POSTFIX_TEST_CAM,cameraData, (result) => {
-                       
+
                 //     });
 
                 },
@@ -816,17 +857,17 @@
                 viewDetail(optionId = "new", disabled) {
                     const buttonEdit = document.getElementById("viewDetailEdit");
                     const buttonSubmit = document.getElementById("viewDetailSubmit");
-                    
+
                     const inputActualOptionId = document.getElementById("actualOptionId");
                     const inputOptionCamera = document.getElementById("selectedCameraToOption");
                     const inputOptionName = document.getElementById("optionName");
-                    
+                    const inputOptionFirtIt = document.getElementById("prvaIteracia");
+
                     const inputOptionIntervalShot = document.getElementById("intervalmezdiFotkami");
                     const inputOptionIntervalError = document.getElementById("novaFotkaprichybeInterval");
                     const inputOptionTryErrro = document.getElementById("novaFotkaprichybePokusy");
+                    const inputCountLeftShots = document.getElementById("pocetSnimokPonechanych")
 
-                    const inputOptionOlderDel = document.getElementById("zmazfotkuStarsiu");
-                    const inputOptionCountDel = document.getElementById("novaFotkaprichybePokusy");
                     const inputOptionRezimFrom = document.getElementById("rezimOd");
                     const inputOptionRezimTo = document.getElementById("rezimTo");
 
@@ -838,7 +879,7 @@
                     const inputOptionJas = document.getElementById("Jas");
                     const inputOptionTimeOnShot = document.getElementById("casNaSnimku");
 
-                   
+
 
                     const Option = data.views[optionId];
 
@@ -847,16 +888,19 @@
                     buttonEdit.classList.toggle("hidden", !disabled);
                     buttonSubmit.classList.toggle("hidden", disabled);
 
-                    // vytvára sa nove nastavenie 
+                    // vytvára sa nove nastavenie
                     if (optionId === "new") {
+
+
                         utils.setAndDisable(inputActualOptionId, "new", disabled);
                         utils.setAndDisable(inputOptionCamera, "", disabled);
                         utils.setAndDisable(inputOptionName, "", disabled);
+                        utils.setAndDisable(inputOptionFirtIt, "", disabled);
+                        
                         utils.setAndDisable(inputOptionIntervalShot,"",disabled);
                         utils.setAndDisable(inputOptionIntervalError,"",disabled);
                         utils.setAndDisable(inputOptionTryErrro,"",disabled);
-                        utils.setAndDisable(inputOptionOlderDel,"",disabled);
-                        utils.setAndDisable(inputOptionCountDel,"",disabled);
+                        utils.setAndDisable(inputCountLeftShots,"",disabled);
                         utils.setAndDisable(inputOptionRezimFrom,"",disabled);
                         utils.setAndDisable(inputOptionRezimTo,"",disabled);
                         utils.setAndDisable(inputOptiongreyscale,"",disabled);
@@ -865,7 +909,7 @@
                         utils.setAndDisable(inputOptionBlack,"",disabled);
                         utils.setAndDisable(inputOptionJas,"",disabled);
                         utils.setAndDisable(inputOptionTimeOnShot,"",disabled);
-                        
+
                     }
                     // iba sa mení disablovanie inputov
                     else if (typeof optionId === "object"){
@@ -874,9 +918,10 @@
                         utils.setAndDisable(inputOptionName, inputOptionName.value, disabled);
                         utils.setAndDisable(inputOptionIntervalShot,inputOptionIntervalShot.value,disabled);
                         utils.setAndDisable(inputOptionIntervalError,inputOptionIntervalError.value,disabled);
+                        utils.setAndDisable(inputOptionFirtIt,inputOptionFirtIt.value,disabled);
                         utils.setAndDisable(inputOptionTryErrro,inputOptionTryErrro.value,disabled);
                         utils.setAndDisable(inputOptionOlderDel,inputOptionOlderDel.value,disabled);
-                        utils.setAndDisable(inputOptionCountDel,inputOptionCountDel.value,disabled);
+                        utils.setAndDisable(inputCountLeftShots,inputCountLeftShots.value,disabled);
                         utils.setAndDisable(inputOptionRezimFrom, inputOptionRezimFrom.value,disabled);
                         utils.setAndDisable(inputOptionRezimTo, inputOptionRezimTo.value,disabled);
                         utils.setAndDisable(inputOptiongreyscale, inputOptiongreyscale.value,disabled);
@@ -889,18 +934,29 @@
                     // zobrazuje sa detail
                     else {
                         $.getJSON(API_URL + "/" + POSTFIX_VIEW + "/" + Option.id, (Option) => {
-                            Option = View.parse(Option[0]);
+                            Option = View.parse(Option);
                             //TODO
+                            // utils.setAndDisable(inputActualOptionId, Option.id, disabled);
                             utils.setAndDisable(inputOptionCamera, Option.camera.id, disabled);
                             utils.setAndDisable(inputOptionName, Option.name, disabled);
-                            utils.setAndDisable(inputOptionMotionDetect, !!Option.photoInterval, disabled);
-                            utils.setAndDisable(inputOptionMotionDetectDelay, Option.photoInterval, disabled);
-                            utils.setAndDisable(inputPhotoOnMove, !!Option.motionDetection, disabled);
-                            utils.setAndDisable(inputPhotoOnMoveValue, Option.motionDetection, disabled);
-                            utils.setAndDisable(inputDeletePhoto, !!Option.deleteInterval, disabled);
-                            utils.setAndDisable(inputDeletePhotoValue, Option.deleteInterval, disabled);
-                            utils.setAndDisable(inputActiveTime, Option.timeFrom || Option.timeTo, disabled);
-                            utils.setAndDisable(inputActiveTimeValue, [Option.timeFrom, Option.timeTo].join(" - "), disabled);
+                            utils.setAndDisable(inputOptionIntervalShot,Option.interval_medzi_fotkami,disabled);
+                            utils.setAndDisable(inputOptionIntervalError,Option.interval_opakovania_pri_chybe,disabled);
+                            utils.setAndDisable(inputOptionTryErrro,Option.pocet_opakovanie_pri_chybe,disabled);
+
+                            utils.setAndDisable(inputOptionFirtIt,Option.value,disabled);
+                            
+                            utils.setAndDisable(inputCountLeftShots,Option.pocet_snimok_ponechanych,disabled);
+                            utils.setAndDisable(inputOptionRezimFrom, Option.cas_od,disabled);
+                            utils.setAndDisable(inputOptionRezimTo, Option.cas_do,disabled);
+                            utils.setAndDisable(inputOptiongreyscale, Option.greyscale,disabled);
+                            utils.setAndDisable(inputOptionoriginal,Option.original,disabled);
+                            utils.setAndDisable(inputOptionWhite,Option.biela_snimka,disabled);
+                            utils.setAndDisable(inputOptionBlack,Option.cierna_snimka,disabled);
+                            utils.setAndDisable(inputOptionJas,Option.brightness,disabled);
+                            utils.setAndDisable(inputOptionTimeOnShot,Option.pridaj_cas_na_fotku,disabled);
+
+
+                          
                             utils.setAndDisable(inputActualOptionId, viewDetail.value, disabled);
                         });
                     }
@@ -960,7 +1016,7 @@
                 },
                 view() {
                     $("#addViewSubmit").click(function () {
-                        
+
                         $.post("URL/addView", JSON.stringify( $("form").serialize()), function (response) {
                             console.log("response: ", response);
                         })
@@ -985,10 +1041,10 @@
                             usbElement.classList.add("hidden");
                             console.log("typ kamery: ", value);
                             switch (value) {
-                                case "IP": 
+                                case "IP":
                                     ipElement.classList.remove("hidden");
                                     break;
-                                case "USB": 
+                                case "USB":
                                     usbElement.classList.remove("hidden");
                                     break;
                                 default:
@@ -1179,7 +1235,7 @@
             uiLibrary: 'bootstrap4',
             format: 'mm.dd.yyyy',
             iconsLibrary: 'fontawesome',
-           
+
         });
 
         </script>
