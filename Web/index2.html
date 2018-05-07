@@ -342,11 +342,12 @@
                                        id="novaFotkaprichybeInterval"
                                        name="novaFotkaprichybeInterval"
                                        step="1"
-                                       value=-1>
+                                       value="0">
 
                                 <label for="novaFotkaprichybePokusy">Počet opakovani pri cbybe</label>
                                 <input type="number"
                                    class="form-control"
+                                   disabled
                                    title="Nová kamera"
                                    id="novaFotkaprichybePokusy"
                                    name="novaFotkaprichybePokusy"
@@ -435,7 +436,7 @@
                             <div class="form-group">
                                 <label for="Jas">Jas:</label>
 
-                                <select name = "Jas">
+                                <select name = "Jas" id="Jas">
                                     <option value=""></option>
                                     <option value="1">ľavy horny roh</option>
                                     <option value="2">pravy horny roh</option>
@@ -571,8 +572,8 @@
                 }
             }
 
-            const API_URL = "http://127.0.0.1:8081/browse";
-            <!--const API_URL = "http://10.1.254.214:8081/browse";-->
+            // const API_URL = "http://127.0.0.1:8081/browse";
+            const API_URL = "http://10.1.254.214:8081/browse";
             //const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons/initData.json";
             const POSTFIX_INIT = "initData";
             const POSTFIX_CAMERA = "KameraDetail";
@@ -747,7 +748,7 @@
 
                 },
                 shot(index) {
-                    $.getJSON(API_URL + "/" + POSTFIX_DEL_SHOT + "/" + index, (result) => {})
+                    $.getJSON(API_URL + "/" + POSTFIX_DEL_SHOT + "/" + data.shots[index].id, (result) => {})
                     data.shots.splice(index, 1);
                     set.shots();
                     // $("#tableShotsContent").find("tr:nth-child(" + index + ")").remove();
@@ -869,7 +870,7 @@
                     const inputCountLeftShots = document.getElementById("pocetSnimokPonechanych")
 
                     const inputOptionRezimFrom = document.getElementById("rezimOd");
-                    const inputOptionRezimTo = document.getElementById("rezimTo");
+                    const inputOptionRezimTo = document.getElementById("rezimDo");
 
                     const inputOptiongreyscale = document.getElementById("greyscale");
 
@@ -899,7 +900,7 @@
                         
                         utils.setAndDisable(inputOptionIntervalShot,"",disabled);
                         utils.setAndDisable(inputOptionIntervalError,"",disabled);
-                        utils.setAndDisable(inputOptionTryErrro,"",disabled);
+                        utils.setAndDisable(inputOptionTryErrro,"",true);
                         utils.setAndDisable(inputCountLeftShots,"",disabled);
                         utils.setAndDisable(inputOptionRezimFrom,"",disabled);
                         utils.setAndDisable(inputOptionRezimTo,"",disabled);
@@ -1209,6 +1210,11 @@
                 init.main();
                 init.view();
                 init.camera();
+
+                document.getElementById("novaFotkaprichybeInterval").onkeyup = function() {
+                    document.getElementById('novaFotkaprichybePokusy').disabled = !this.value || this.value == 0;
+                }
+                document.getElementById('novaFotkaprichybePokusy').disabled = true;
             });
 
 
@@ -1223,6 +1229,7 @@
                 return $('#endDate').val();
             }
         });
+        
         $('#endDate').datepicker({
             uiLibrary: 'bootstrap4',
             format: 'mm.dd.yyyy',
@@ -1231,6 +1238,7 @@
                 return $('#startDate').val();
             }
         });
+        
         $('#delDate').datepicker({
             uiLibrary: 'bootstrap4',
             format: 'mm.dd.yyyy',
