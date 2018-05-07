@@ -670,7 +670,9 @@
                     
                     const inputActualCameraId = document.getElementById("actualOptionId");
                     const viewDataArray = $("#viewDetailForm").serializeArray();
-                    const viewData = viewDataArray.map(e => e.name + "=" + e.value).join("&");
+                    const viewData = viewDataArray.map(e => {
+                        if (e.name === "") {}
+                    }).map(e => e.name + "=" + e.value).join("&");
                     console.log("viewData: ", viewData);
                     if (inputActualCameraId.value === "new") {
                         console.log("viewSAVE");
