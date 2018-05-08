@@ -32,25 +32,20 @@
             .hidden {
                 display: none;
             }
-
             .buttons {
                 text-align: right;
                 width: 250px;
             }
-
             .buttons button {
                 visibility: hidden;
             }
-
             tr:hover .buttons button {
                 visibility: visible;
             }
-
             #imagePreview {
                 width: 100%;
                 height: 100%;
             }
-
             .cameraError {
                 display: none;
                 color: red;
@@ -436,6 +431,21 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="selectedOptionToOption">Nastavenie:</label>
+                                <select class="js-example-basic-single"
+                                        id="selectedOptionToOption"
+                                        style="width: 100%"
+                                        name="selectedOptionToOption"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="selectedCameraToOption">Kamera2:</label>
+                                <select class="js-example-basic-single"
+                                        id="selectedCameraToOption2"
+                                        style="width: 100%"
+                                        name="selectedCameraToOption2"></select>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="Jas">Jas:</label>
 
                                 <select name = "Jas" id="Jas">
@@ -529,7 +539,6 @@
                     
                     
                 }
-
                 static parse(view) {
                     return new View(
                         view.id || view.n_id,
@@ -573,7 +582,6 @@
                     )
                 }
             }
-
             const API_URL = "http://127.0.0.1:8081/browse";
             // const API_URL = "http://10.1.254.214:8081/browse";
             //const API_URL = "https://raw.githubusercontent.com/Burk0/webserver-python/master/Model/Jsons/initData.json";
@@ -590,7 +598,6 @@
             const POSTFIX_DEL_SHOT = "DelShot";
             const POSTFIX_EDIT_VIEW = "EditView";
             const POSTFIX_EDIT_CAM = "EditCam";
-
             const elements = {
                 searchInput: document.getElementById("search"),
                 camerasBody: document.getElementById("tableCamerasContent"),
@@ -602,13 +609,11 @@
                 startDate: document.getElementById("startDate"),
                 endDate: document.getElementById("endDate"),
             };
-
             const data = {
                 cameras: [],
                 views: [],
                 shots: []
             };
-
             const utils = {
                 getParameterByName(name, url = location.href){
                     if (!url) {
@@ -640,12 +645,10 @@
                     element.disabled = disabled;
                 }
             };
-
             const handlers = {
                 cameraSave() {
                     const inputActualCameraId = document.getElementById("actualCameraId");
                     const cameraData = $("#cameraDetailForm").serialize();
-
                     console.log("cameraData: ", cameraData);
                     if (inputActualCameraId.value === "new") {
                         //new
@@ -658,7 +661,6 @@
                         //         element.classList.add("has-error");
                         //         element.classList.add("has-feedback");
                         //     }
-
                         //TODO
                         $.get(API_URL + "/" + POSTFIX_AddCam , cameraData, (result) => {
                             console.log(result.return)
@@ -704,13 +706,9 @@
                                 $("#closeCameraDetailButton").click();
                             }
                         });
-
                     }
                 },
-
-
                 viewSave() {
-
                     const inputActualCameraId = document.getElementById("actualOptionId");
                     const viewDataArray = $("#viewDetailForm").serializeArray();
                     const viewData = viewDataArray.map(e => e.name + "=" + e.value).join("&");
@@ -729,7 +727,6 @@
                                 console.log("else")
                                 window.location.href = API_URL;
                                 $("#closeViewDetailButton").click();
-
                             }
                         });
                     }
@@ -756,10 +753,8 @@
                             }
                         });
                     }
-
                 }
             };
-
             const remove = {
                 camera(index) {
                     $.getJSON(API_URL + "/" + POSTFIX_DEL_CAM + "/" + data.cameras[index].id, (result) => {})
@@ -770,7 +765,6 @@
                     $.getJSON(API_URL + "/" + POSTFIX_DEL_VIEW + "/" + data.views[index].id, (result) => {})
                     data.views.splice(index, 1);
                     set.options();
-
                 },
                 shot(index) {
                     $.getJSON(API_URL + "/" + POSTFIX_DEL_SHOT + "/" + data.shots[index].id, (result) => {})
@@ -779,7 +773,6 @@
                     // $("#tableShotsContent").find("tr:nth-child(" + index + ")").remove();
                 }
             };
-
             const show = {
                 getImageFromCam() {
                 // var e = document.getElementById("usbList");
@@ -789,15 +782,11 @@
                 console.log("cameraData:", cameraData);
                 window.open(API_URL + "/" + POSTFIX_TEST_CAM +cameraData);
                 // $.getJSON(API_URL + "/" + POSTFIX_TEST_CAM,cameraData, (result) => {
-
                 //     });
-
                 },
-
                 shotDetail(index) {
                     console.log("volam tuto " + data.shots[index].previewUrl)
                     document.getElementById("urltoFile").innerHTML = data.shots[index].previewUrl;
-
                 },
                 openDetail(index) {
                     const imageElement = document.getElementById("imagePreview");
@@ -812,9 +801,7 @@
                     $(".has-error").removeClass("has-error");
                     const buttonEdit = document.getElementById("cameraDetailEdit");
                     const buttonSubmit = document.getElementById("cameraDetailSubmit");
-
                     const inputActualCameraId = document.getElementById("actualCameraId");
-
                     const inputCameraName = document.getElementById("cameraName");
                     const inputCamera = document.getElementById("acc_name");
                     const inputPassword = document.getElementById("acc_pass");
@@ -822,7 +809,6 @@
                     const inputCameraType = document.getElementById("cam");
                     console.log("inputCameraType: ", inputCameraType);
                     const camera = data.cameras[cameraId];
-
                     $.getJSON(API_URL + "/" + POSTFIX_USB_CAM, (result) => {
                         const usbCamerasSelect = document.getElementById("usbList");
                         let body = "";
@@ -833,13 +819,9 @@
                         });
                         usbCamerasSelect.innerHTML = body;
                     });
-
-
                     disabled = typeof disabled === "undefined" ? cameraId !== "new" : disabled;
-
                     buttonEdit.classList.toggle("hidden", !disabled);
                     buttonSubmit.classList.toggle("hidden", disabled);
-
                     // vytvára sa nová kamera
                     if (cameraId === "new") {
                         utils.setAndDisable(inputCamera, "", disabled);
@@ -883,43 +865,35 @@
                 viewDetail(optionId = "new", disabled) {
                     const buttonEdit = document.getElementById("viewDetailEdit");
                     const buttonSubmit = document.getElementById("viewDetailSubmit");
-
                     const inputActualOptionId = document.getElementById("actualOptionId");
                     const inputOptionCamera = document.getElementById("selectedCameraToOption");
+                    const inputOptionCamera2 = document.getElementById("selectedCameraToOption2");
+                    const inputOptionOption = document.getElementById("selectedOptionToOption");
                     const inputOptionName = document.getElementById("optionName");
                     const inputOptionFirtIt = document.getElementById("prvaIteracia");
-
                     const inputOptionIntervalShot = document.getElementById("intervalmezdiFotkami");
                     const inputOptionIntervalError = document.getElementById("novaFotkaprichybeInterval");
                     const inputOptionTryErrro = document.getElementById("novaFotkaprichybePokusy");
                     const inputCountLeftShots = document.getElementById("pocetSnimokPonechanych")
-
                     const inputOptionRezimFrom = document.getElementById("rezimOd");
                     const inputOptionRezimTo = document.getElementById("rezimDo");
-
                     const inputOptiongreyscale = document.getElementById("greyscale");
-
                     const inputOptionoriginal = document.getElementById("original");
                     const inputOptionWhite = document.getElementById("biela");
                     const inputOptionBlack = document.getElementById("cierna");
                     const inputOptionJas = document.getElementById("Jas");
                     const inputOptionTimeOnShot = document.getElementById("casNaSnimku");
-
-
-
                     const Option = data.views[optionId];
-
                     disabled = typeof disabled === "undefined" ? optionId !== "new" : disabled;
-
                     buttonEdit.classList.toggle("hidden", !disabled);
                     buttonSubmit.classList.toggle("hidden", disabled);
-
                     // vytvára sa nove nastavenie
                     if (optionId === "new") {
-
-
                         utils.setAndDisable(inputActualOptionId, "new", disabled);
                         utils.setAndDisable(inputOptionCamera, "", disabled);
+                        utils.setAndDisable(inputOptionCamera2, "", disabled);
+                        utils.setAndDisable(inputOptionOption, "", disabled);
+
                         utils.setAndDisable(inputOptionName, "", disabled);
                         utils.setAndDisable(inputOptionFirtIt, "", disabled);
                         
@@ -935,12 +909,13 @@
                         utils.setAndDisable(inputOptionBlack,"",disabled);
                         utils.setAndDisable(inputOptionJas,"",disabled);
                         utils.setAndDisable(inputOptionTimeOnShot,"",disabled);
-
                     }
                     // iba sa mení disablovanie inputov
                     else if (typeof optionId === "object"){
                         utils.setAndDisable(inputActualOptionId, inputActualOptionId.value, disabled);
                         utils.setAndDisable(inputOptionCamera, inputOptionCamera.value, disabled);
+                        utils.setAndDisable(inputOptionCamera2, inputOptionCamera2.value, disabled);
+                        utils.setAndDisable(inputOptionOption, inputOptionOption.value, disabled);
                         utils.setAndDisable(inputOptionName, inputOptionName.value, disabled);
                         utils.setAndDisable(inputOptionIntervalShot,inputOptionIntervalShot.value,disabled);
                         utils.setAndDisable(inputOptionIntervalError,inputOptionIntervalError.value,disabled);
@@ -964,11 +939,12 @@
                             //TODO
                             // utils.setAndDisable(inputActualOptionId, Option.id, disabled);
                             utils.setAndDisable(inputOptionCamera, Option.camera.id, disabled);
+                            utils.setAndDisable(inputOptionCamera2, Option.camera2.id, disabled);
+                            utils.setAndDisable(inputOptionOption, Option.option.id, disabled);
                             utils.setAndDisable(inputOptionName, Option.name, disabled);
                             utils.setAndDisable(inputOptionIntervalShot,Option.interval_medzi_fotkami,disabled);
                             utils.setAndDisable(inputOptionIntervalError,Option.interval_opakovania_pri_chybe,disabled);
                             utils.setAndDisable(inputOptionTryErrro,Option.pocet_opakovanie_pri_chybe,disabled);
-
                             utils.setAndDisable(inputOptionFirtIt,Option.value,disabled);
                             
                             utils.setAndDisable(inputCountLeftShots,Option.pocet_snimok_ponechanych,disabled);
@@ -980,7 +956,6 @@
                             utils.setAndDisable(inputOptionBlack,Option.cierna_snimka,disabled);
                             utils.setAndDisable(inputOptionJas,Option.brightness,disabled);
                             utils.setAndDisable(inputOptionTimeOnShot,Option.pridaj_cas_na_fotku,disabled);
-
                             utils.setAndDisable(inputActualOptionId, Option.id, disabled);
                         });
                     }
@@ -993,12 +968,9 @@
                     }, "json");
                 }
             };
-
             const init = {
                 main() {
                     const params = {};
-
-
                     elements.startDate.onchange = elements.endDate.onchange = elements.searchInput.onkeyup = () => {
                         // if (event.keyCode === 13) { //Enter
                         // alert("vyhladávam slovo: " + event.target.value);
@@ -1007,40 +979,43 @@
                         set.shots();
                         // }
                     };
-
-
                     $.getJSON(API_URL + "/" + POSTFIX_INIT, (response) => {
                         while(data.cameras.length){
                             data.cameras.splice(0, 1);
                         }
                         data.cameras.push.apply(data.cameras, response.cams.map(Camera.parse));
                         set.cameras();
-
                         while(data.views.length){
                             data.views.splice(0, 1);
                         }
                         data.views.push.apply(data.views, response.views.map(View.parse));
                         set.options();
-
-
                         while(data.shots.length){
                             data.shots.splice(0, 1);
                         }
                         data.shots.push.apply(data.shots, response.snimky.map(Shot.parse));
                         set.shots();
-
                         const html = "<option></option>" + data.cameras.map((camera) => {
                             return `<option value="${camera.id}">${camera.name}</option>`;
                         }).join("");
-                        $('.js-example-basic-single').html(html).select2({
-                            placeholder: 'Kamera pre ktorú sú určené nastavenia',
+                        $('.js-example-basic-single').each(function(){
+                            $(this).html(html).select2({
+                                placeholder: 'Kamera pre ktorú sú určené nastavenia',
+                                allowClear: true
+                            })
+                        });
+
+                        const camHtml = "<option></option>" + data.views.map((view) => {
+                            return `<option value="${view.id}">${view.name}</option>`
+                        })
+                        $("#selectedOptionToOption").html(camHtml).select2({
+                            placeholder: 'Nastavenie nastavenia',
                             allowClear: true
                         });
                     })
                 },
                 view() {
                     $("#addViewSubmit").click(function () {
-
                         $.post("URL/addView", JSON.stringify( $("form").serialize()), function (response) {
                             console.log("response: ", response);
                         })
@@ -1058,7 +1033,6 @@
                         })
                     });
                     */
-
                     function onChangeCameraType() {
                             const value = camElement.options[camElement.selectedIndex].value;
                             ipElement.classList.add("hidden");
@@ -1075,12 +1049,10 @@
                                     alert("neplatný typ kamery: " + value);
                             }
                     }
-
                     camElement.onchange = onChangeCameraType;
                     onChangeCameraType();
                 }
             };
-
             const set = {
                 cameras() {
                     const searchKey = elements.searchInput.value.toLowerCase();
@@ -1161,8 +1133,6 @@
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </button>
                             </td>
-
-
                         </tr>
                     `
                     });
@@ -1225,23 +1195,17 @@
                     elements.shotsBody.innerHTML = innerHtml;
                 }
             };
-
             // ak sa načíta dokument tak za zavolajú všetky inicializačné metódy
             $(function () {
                 elements.searchInput.value = utils.getParameterByName("search");
-
                 init.main();
                 init.view();
                 init.camera();
-
                 document.getElementById("novaFotkaprichybeInterval").onkeyup = function() {
                     document.getElementById('novaFotkaprichybePokusy').disabled = !this.value || this.value == 0;
                 }
                 document.getElementById('novaFotkaprichybePokusy').disabled = true;
             });
-
-
-
         //var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
         $('#startDate').datepicker({
             uiLibrary: 'bootstrap4',
@@ -1266,9 +1230,7 @@
             uiLibrary: 'bootstrap4',
             format: 'mm.dd.yyyy',
             iconsLibrary: 'fontawesome',
-
         });
-
         </script>
     </body>
 </html>
