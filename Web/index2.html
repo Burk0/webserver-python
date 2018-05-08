@@ -519,7 +519,7 @@
             }
             class View {
                 constructor(id,meno,interval_medzi_fotkami,interval_opakovania_pri_chybe,pocet_opakovanie_pri_chybe,pocet_snimok_ponechanych,cas_od,cas_do, biela_snimka, cierna_snimka,
-                    greyscale, brightness, original, pridaj_cas_na_fotku,zacat_prvu_iteraciu,camera) {
+                    greyscale, brightness, original, pridaj_cas_na_fotku,zacat_prvu_iteraciu,camera, camera2, option) {
                     
                     this.id= id;
                     this.name = meno;
@@ -536,6 +536,8 @@
                     this.original=original;
                     this.pridaj_cas_na_fotku=pridaj_cas_na_fotku;
                     this.camera=camera;
+                    this.camera2 = camera2;
+                    this.option = option;
                     
                     
                 }
@@ -557,6 +559,8 @@
                         view.pridaj_cas_na_fotku,
                         view.zacat_prvu_iteraciu,
                         new Camera(view.kamera_id, view.n_kamera_meno || "unknown camera name"),
+                        new Camera(view.kamera2_id, view.n_kamera2_meno || "unknown camera name"),
+                        new View(view.view_id, view.n_view_name)
                     );
                 }
             }
